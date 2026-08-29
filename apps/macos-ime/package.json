@@ -1,0 +1,12 @@
+{
+  "name": "@jieum/macos-ime",
+  "version": "0.1.0",
+  "private": true,
+  "description": "지음 macOS 시스템 입력기 (Swift/IMK 셸)",
+  "scripts": {
+    "build": "./scripts/build-app.sh",
+    "build-installer": "./scripts/build-installer.sh",
+    "install-debug": "./scripts/install-debug.sh",
+    "bench": "swift build && ./.build/debug/JieumIME --bench"
+  }
+}

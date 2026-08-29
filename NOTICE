@@ -1,0 +1,34 @@
+Jieum
+Copyright 2026 Lee Jinwoo
+
+Code
+----
+
+Except for the `data/` directory, the source code in this repository is licensed under
+the Apache License 2.0. The full license text is in `LICENSE`.
+
+Jieum dynamically links to libhangul, which is licensed under LGPL 2.1. libhangul is not
+included in this repository.
+
+Dictionary data
+---------------
+
+Dictionary data and dictionary build artifacts are licensed separately under CC BY-SA.
+See `data/LICENSE` for details.
+
+Distributed dictionary artifacts contain material derived from:
+
+- Standard Korean Language Dictionary, National Institute of Korean Language,
+  CC BY-SA 2.0 KR
+- Urimalsaem, National Institute of Korean Language, CC BY-SA 2.0 KR
+- Korean Wikisource, CC BY-SA 4.0
+- Supreme Court of Korea list of characters permitted in names
+- Unihan Database `kHangul`, Unicode License
+- Korean character-grade tables
+
+Copyright © 1991-2026 Unicode, Inc. All rights reserved.
+https://www.unicode.org/copyright.html
+
+Raw dictionary sources and build artifacts are not included in the public source tree.
+Any distribution that includes built dictionary files must preserve the attribution and
+license notices above.

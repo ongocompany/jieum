@@ -1,0 +1,17 @@
+[package]
+name = "jieum-editor"
+version = "0.1.0"
+description = "jieum 한자입력기 내장 에디터"
+authors = ["Lee Jinwoo"]
+license = "MIT"
+edition = "2021"
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+serde_json = "1"
+serde = { version = "1", features = ["derive"] }
+tauri = { version = "2", features = [] }
+tauri-plugin-dialog = "2"
+tauri-plugin-fs = "2"

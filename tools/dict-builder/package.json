@@ -1,0 +1,23 @@
+{
+  "name": "@jieum/dict-builder",
+  "version": "0.0.1",
+  "private": true,
+  "description": "한자한자 사전 → 지음 바이너리 Trie 변환 빌드 도구",
+  "type": "module",
+  "scripts": {
+    "build:dict": "tsx src/build.ts",
+    "build-readings": "tsx src/build-readings.ts",
+    "extract-archaic": "tsx src/extract-archaic-tier.ts",
+    "merge-freq": "tsx src/merge-homonym-freq.ts",
+    "extract-collocation": "tsx src/extract-collocation.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "devDependencies": {
+    "@types/node": "^25.5.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0",
+    "vitest": "^3.1.0"
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "name": "@jieum/engine-server",
+  "version": "0.0.1",
+  "private": true,
+  "description": "지음 엔진 서버 — 플랫폼 입력기 셸이 로컬 소켓으로 붙는 변환 엔진",
+  "type": "module",
+  "main": "./dist/main.js",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "start": "tsx src/main.ts",
+    "bench": "tsx src/bench.ts",
+    "compile": "bun build --compile src/main.ts --outfile bin/jieum-engine"
+  },
+  "dependencies": {
+    "@jieum/core": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^25.5.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0",
+    "vitest": "^3.1.0"
+  }
+}

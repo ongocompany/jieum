@@ -1,0 +1,31 @@
+{
+  "name": "@jieum/core",
+  "version": "0.0.1",
+  "private": true,
+  "description": "지음 코어 엔진 — Trie, Matcher, Ranker, Boundary Detector",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "cli": "tsx src/cli.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^25.5.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0",
+    "vitest": "^3.1.0"
+  },
+  "dependencies": {
+    "es-hangul": "^2.0.0"
+  }
+}

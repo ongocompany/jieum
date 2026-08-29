@@ -1,0 +1,5 @@
+/* Name shown in the Input Sources list. Keys are input mode identifiers from Info.plist.
+   The user-visible name stays Korean "지음" per the project naming rule — only
+   identifiers and file names are ASCII. */
+"CFBundleName" = "지음";
+"com.ongocompany.inputmethod.Jieum.hangul" = "지음";

@@ -1,0 +1,27 @@
+# 사전은 원본 그대로 올린다. Cloudflare가 전송할 때 알아서 압축한다.
+#
+# ⚠️ gzip 사본을 같은 이름으로 올리고 여기서 Content-Encoding: gzip을 붙이는 방법을
+# 2026-08-28에 시도했다가 되돌렸다. Cloudflare가 그 헤더를 전송 계층에서 소비하고
+# 본문은 압축된 채로 넘겨, 브라우저가 받는 첫 바이트가 원본 매직("HIME")이 아니라
+# gzip 매직(1f 8b)이었다 — 사전이 통째로 깨진다.
+# Content-Type을 일부러 text/plain으로 준다.
+#
+# Cloudflare는 전송할 때 알아서 압축하지만 **압축 대상 MIME이 정해져 있고
+# application/octet-stream은 거기 없다.** `.dat` 확장자를 그대로 두면 방문자가
+# 26 MB 원본을 통째로 받는다(2026-08-28 실측). text/plain으로 선언하면 압축된다.
+#
+# 안전한 이유: SDK는 이 파일을 `res.arrayBuffer()`로 읽는다. Content-Type과
+# 무관하게 원시 바이트를 받으므로 해석이 달라지지 않는다.
+/data/jieum-dict.dat
+  Content-Type: text/plain; charset=utf-8
+  Cache-Control: public, max-age=31536000, immutable
+
+# 사전이 바뀌었는지 판별하는 파일이라 오래 물고 있으면 안 된다.
+/data/jieum-meta.json
+  Cache-Control: public, max-age=300
+
+/data/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/jieum.iife.js
+  Cache-Control: public, max-age=604800

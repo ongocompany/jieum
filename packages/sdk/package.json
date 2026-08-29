@@ -1,0 +1,30 @@
+{
+  "name": "@jieum/sdk",
+  "version": "0.1.0",
+  "description": "지음입력기 Web SDK — <script> 한 줄로 웹사이트에 한자 입력기 임베드",
+  "type": "module",
+  "main": "./dist/jieum.js",
+  "module": "./dist/jieum.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/jieum.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "vite build && tsc -p tsconfig.build.json",
+    "dev": "vite build --watch"
+  },
+  "dependencies": {
+    "@jieum/core": "workspace:*",
+    "@jieum/browser": "workspace:*"
+  },
+  "devDependencies": {
+    "vite": "^6.4.0",
+    "typescript": "^5.8.3"
+  }
+}

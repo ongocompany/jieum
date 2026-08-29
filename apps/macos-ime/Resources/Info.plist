@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>ko</string>
+	<key>CFBundleExecutable</key>
+	<string>JieumIME</string>
+	<key>CFBundleIdentifier</key>
+	<string>com.ongocompany.inputmethod.Jieum</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<!-- 사용자에게 보이는 이름은 한글. 번들 파일명·식별자는 ASCII로 둔다 -->
+	<key>CFBundleName</key>
+	<string>지음</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>0.1.0</string>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>LSMinimumSystemVersion</key>
+	<string>14.0</string>
+	<!-- 입력기는 Dock에 뜨지 않고 배경에서만 돈다 -->
+	<key>LSBackgroundOnly</key>
+	<true/>
+
+	<!-- IMK 배선 -->
+	<key>InputMethodConnectionName</key>
+	<string>Jieum_1_Connection</string>
+	<!--
+		Swift 클래스 이름은 런타임에서 모듈 이름이 붙어 맹글링된다.
+		JieumInputController에 @objc(JieumInputController)를 붙여 이름을 고정했고,
+		여기 적힌 이름이 그것과 반드시 같아야 한다. 어긋나면 입력기가 뜨긴 하는데
+		키 이벤트가 하나도 오지 않는 형태로 조용히 실패한다.
+	-->
+	<key>InputMethodServerControllerClass</key>
+	<string>JieumInputController</string>
+	<key>tsInputMethodCharacterRepertoireKey</key>
+	<array>
+		<string>Kore</string>
+	</array>
+
+	<!--
+		입력 소스 목록(시스템 설정 → 키보드 → 입력 소스)에 뜨게 하는 부분.
+		이 사전이 없으면 앱은 설치돼도 목록에 나타나지 않는다.
+	-->
+	<key>ComponentInputModeDict</key>
+	<dict>
+		<key>tsInputModeListKey</key>
+		<dict>
+			<key>com.ongocompany.inputmethod.Jieum.hangul</key>
+			<dict>
+				<key>TISInputSourceID</key>
+				<string>com.ongocompany.inputmethod.Jieum.hangul</string>
+				<key>TISIntendedLanguage</key>
+				<string>ko</string>
+				<key>tsInputModeCharacterRepertoireKey</key>
+				<array>
+					<string>Kore</string>
+				</array>
+				<key>tsInputModeDefaultStateKey</key>
+				<true/>
+				<key>tsInputModeIsVisibleKey</key>
+				<true/>
+				<key>tsInputModeKeyEquivalentModifiersKey</key>
+				<integer>0</integer>
+				<key>tsInputModePrimaryInScriptKey</key>
+				<true/>
+				<key>tsInputModeScriptKey</key>
+				<string>smKorean</string>
+			</dict>
+		</dict>
+		<key>tsVisibleInputModeOrderedArrayKey</key>
+		<array>
+			<string>com.ongocompany.inputmethod.Jieum.hangul</string>
+		</array>
+	</dict>
+</dict>
+</plist>

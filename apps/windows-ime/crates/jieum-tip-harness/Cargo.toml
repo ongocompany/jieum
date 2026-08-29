@@ -1,0 +1,24 @@
+[package]
+name = "jieum-tip-harness"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+description = "지음 TSF 입력기 시험 장치 — 실제 앱 없이 TIP을 적재·활성화한다"
+
+[[bin]]
+name = "jieum-tip-harness"
+path = "src/main.rs"
+
+[dependencies]
+jieum-engine-client = { workspace = true }
+windows-core = { workspace = true }
+windows = { workspace = true, features = [
+    "Win32_Foundation",
+    "Win32_Graphics_Gdi",
+    "Win32_System_Com",
+    "Win32_System_Ole",
+    "Win32_System_Variant",
+    "Win32_UI_Input_KeyboardAndMouse",
+    "Win32_UI_TextServices",
+    "Win32_UI_WindowsAndMessaging",
+] }

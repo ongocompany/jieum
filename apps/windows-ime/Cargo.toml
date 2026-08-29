@@ -1,0 +1,34 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/jieum-candidates",
+    "crates/jieum-engine-client",
+    "crates/jieum-tip",
+    "crates/jieum-tip-harness",
+    "crates/jieum-tip-host",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.85"
+
+[workspace.dependencies]
+windows = "0.62"
+windows-core = "0.62"
+serde = "1"
+serde_json = "1"
+jieum-engine-client = { path = "crates/jieum-engine-client" }
+jieum-candidates = { path = "crates/jieum-candidates" }
+
+[profile.release]
+# 입력기 DLL은 사용자가 글을 쓰는 모든 프로세스에 적재된다. 크기가 곧 상주 비용이다.
+opt-level = "s"
+lto = true
+codegen-units = 1
+strip = true
+
+# panic = "abort"를 쓰지 않는다. 이 DLL은 남의 프로세스 안에서 돌기 때문에 abort는
+# 아래한글이나 워드를 통째로 죽인다. unwind로 두고 COM 진입점마다 catch_unwind로
+# 막아 E_FAIL로 되돌리면, 최악이 "입력기가 멈춘다"에서 끝나고 "쓰던 글이 날아간다"로
+# 번지지 않는다. (경계 래퍼는 COM 골격을 세운 뒤 넣는다)

@@ -1,0 +1,10 @@
+[package]
+name = "jieum-candidates"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+description = "후보 목록 상태 — 순수 로직. 플랫폼 의존이 없어 리눅스에서 시험된다"
+
+[dependencies]
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true }

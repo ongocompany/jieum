@@ -1,0 +1,41 @@
+# 지음 사전 데이터 라이선스
+
+`data/`의 사전 원본과 빌드 결과는 CC BY-SA 조건으로 배포합니다. 저장소의 코드에 적용되는
+Apache License 2.0과는 별개입니다.
+
+## 출처
+
+| 자료 | 제공 기관 | 라이선스 또는 성격 |
+|---|---|---|
+| 표준국어대사전 | 국립국어원 | CC BY-SA 2.0 KR |
+| 우리말샘 | 국립국어원 | CC BY-SA 2.0 KR |
+| 위키문헌 한자 병기 자료 | 위키미디어 | CC BY-SA 4.0 |
+| 인명용 한자표 | 대한민국 대법원 | 법령 부속 자료 |
+| Unihan `kHangul` | Unicode Consortium | Unicode License |
+| 한국어문회 배정한자 급수표 | 한국어문회 | 사실 자료 |
+
+Unihan 저작권 고지:
+
+Copyright © 1991-2026 Unicode, Inc. All rights reserved.
+https://www.unicode.org/copyright.html
+
+국립국어원 저작권 정책(2026-08-06 확인):
+https://m.korean.go.kr/front/nuri/pageView.do?page_id=P000508&mkn=3
+
+라이선스 전문:
+
+- CC BY-SA 2.0 KR: https://creativecommons.org/licenses/by-sa/2.0/kr/
+- CC BY-SA 4.0: https://creativecommons.org/licenses/by-sa/4.0/
+
+## 데이터 변경 내용
+
+지음은 원자료를 그대로 배포하지 않습니다.
+
+- 표준국어대사전과 우리말샘의 표제어·한자 쌍을 병합했습니다.
+- Unihan `kHangul` 독음을 기준으로 읽기가 맞지 않는 항목을 제외했습니다.
+- 위키문헌의 한자 병기에서 고전 어휘를 보충했습니다.
+- 조회용 음절 Trie 바이너리로 변환했습니다.
+
+빌드 결과인 `jieum-dict.dat`, `jieum-collocation.json` 등에도 같은 CC BY-SA 조건과
+출처 표시가 적용됩니다. 배포물에 이 파일이 포함되면 이 문서와 `NOTICE`의 출처 고지를
+함께 제공해야 합니다.

@@ -1,0 +1,34 @@
+[package]
+name = "jieum-tip"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+description = "지음 Windows TSF Text Input Processor"
+build = "build.rs"
+
+[lib]
+# TSF는 입력기를 DLL로 적재하므로 cdylib이 본체다. rlib은 시험용.
+name = "jieum_tip"
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+jieum-candidates = { workspace = true }
+jieum-engine-client = { workspace = true }
+windows-core = { workspace = true }
+serde_json = { workspace = true }
+windows = { workspace = true, features = [
+    "Win32_Foundation",
+    "Win32_Globalization",
+    # WNDCLASSW가 브러시·커서 핸들을 품고 있어 이 feature 없이는 창 클래스 등록 API가 없다
+    "Win32_Graphics_Gdi",
+    "Win32_Security",
+    "Win32_System_Com",
+    "Win32_System_LibraryLoader",
+    # 후보 창에 명령을 넘기는 공유 메모리 (`candidate_ui.rs`)
+    "Win32_System_Memory",
+    "Win32_System_Registry",
+    "Win32_System_SystemServices",
+    "Win32_UI_Input_KeyboardAndMouse",
+    "Win32_UI_TextServices",
+    "Win32_UI_WindowsAndMessaging",
+] }

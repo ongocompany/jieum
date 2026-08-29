@@ -1,0 +1,24 @@
+{
+  "name": "@jieum/chrome-extension",
+  "version": "0.0.1",
+  "private": true,
+  "description": "지음입력기 Chrome 확장",
+  "type": "module",
+  "scripts": {
+    "dev": "wxt",
+    "dev:firefox": "wxt -b firefox",
+    "build": "wxt build",
+    "build:firefox": "wxt build -b firefox",
+    "zip": "wxt zip",
+    "typecheck": "tsc --noEmit",
+    "postinstall": "wxt prepare"
+  },
+  "dependencies": {
+    "@jieum/browser": "workspace:*",
+    "@jieum/core": "workspace:*"
+  },
+  "devDependencies": {
+    "wxt": "^0.19.0",
+    "typescript": "^5.7.0"
+  }
+}

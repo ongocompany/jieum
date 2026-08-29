@@ -1,0 +1,4 @@
+# 사전과 SDK 번들은 사본이다. 원본은 data/build 와 packages/sdk/dist.
+# scripts/build.sh 가 채운다 — 커밋하면 두 곳이 어긋난다.
+public/data/
+public/jieum.iife.js

@@ -1,0 +1,5 @@
+#!/bin/bash
+set -eu
+
+/usr/bin/killall JieumIME 2>/dev/null || true
+exit 0

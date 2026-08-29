@@ -1,0 +1,335 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #app {
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: "Pretendard", "Noto Sans KR", -apple-system, sans-serif;
+  background: #f5f5f5;
+  color: #1a1a1a;
+}
+
+#app {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ─── 툴바 ─── */
+
+#toolbar {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 12px;
+  background: #fff;
+  border-bottom: 1px solid #e0e0e0;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+.toolbar-group {
+  display: flex;
+  align-items: center;
+  gap: 1px;
+}
+
+.toolbar-group + .toolbar-group {
+  margin-left: 8px;
+  padding-left: 8px;
+  border-left: 1px solid #e0e0e0;
+}
+
+.toolbar-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 28px;
+  border: none;
+  background: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #555;
+  transition: background 0.1s;
+}
+
+.toolbar-btn:hover {
+  background: #f0f0f0;
+}
+
+.toolbar-btn.active {
+  background: #e3e8f0;
+  color: #2563eb;
+}
+
+.toolbar-btn[disabled] {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.toolbar-select {
+  height: 28px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 12px;
+  padding: 0 4px;
+  background: white;
+  cursor: pointer;
+}
+
+/* ─── 탭바 ─── */
+
+#tabbar {
+  display: flex;
+  align-items: center;
+  background: #f0f0f0;
+  border-bottom: 1px solid #ddd;
+  padding: 0 4px;
+  flex-shrink: 0;
+  overflow-x: auto;
+  gap: 1px;
+}
+
+.tab {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  font-size: 12px;
+  color: #666;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  transition: background 0.1s;
+  user-select: none;
+}
+
+.tab:hover {
+  background: #e8e8e8;
+}
+
+.tab.active {
+  background: white;
+  color: #1a1a1a;
+  border-bottom-color: #2563eb;
+}
+
+.tab-label {
+  pointer-events: none;
+}
+
+.tab-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border: none;
+  background: none;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #999;
+  line-height: 1;
+  padding: 0;
+}
+
+.tab-close:hover {
+  background: #ddd;
+  color: #333;
+}
+
+.tab-add {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  color: #999;
+  margin-left: 4px;
+}
+
+.tab-add:hover {
+  background: #e0e0e0;
+  color: #333;
+}
+
+/* 탭별 에디터 래퍼 */
+.tab-editor-wrapper {
+  min-height: 100%;
+}
+
+/* ─── 에디터 ─── */
+
+#editor {
+  flex: 1;
+  overflow-y: auto;
+  background: white;
+  padding: 0;
+}
+
+.tiptap {
+  padding: 40px 60px;
+  min-height: 100%;
+  outline: none;
+  font-size: 16px;
+  line-height: 1.8;
+}
+
+.tiptap:focus {
+  outline: none;
+}
+
+.tiptap p {
+  margin-bottom: 0.5em;
+}
+
+.tiptap h1 { font-size: 28px; font-weight: 700; margin-bottom: 0.6em; }
+.tiptap h2 { font-size: 22px; font-weight: 700; margin-bottom: 0.5em; }
+.tiptap h3 { font-size: 18px; font-weight: 600; margin-bottom: 0.4em; }
+
+.tiptap blockquote {
+  border-left: 3px solid #ddd;
+  padding-left: 16px;
+  color: #666;
+  margin: 0.5em 0;
+}
+
+.tiptap ul, .tiptap ol {
+  padding-left: 24px;
+  margin-bottom: 0.5em;
+}
+
+/* 중첩 번호 리스트 스타일: 1. → 가. → a. → (1) */
+.tiptap ol { list-style-type: decimal; }
+.tiptap ol ol { list-style-type: korean-hangul-formal; }
+.tiptap ol ol ol { list-style-type: lower-alpha; }
+.tiptap ol ol ol ol { list-style-type: decimal; }
+
+.tiptap hr {
+  border: none;
+  border-top: 1px solid #e0e0e0;
+  margin: 1em 0;
+}
+
+/* ─── 표 ─── */
+
+.tiptap table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 1em 0;
+  table-layout: fixed;
+}
+
+.tiptap th, .tiptap td {
+  border: 1px solid #ccc;
+  padding: 8px 12px;
+  vertical-align: top;
+  min-width: 60px;
+}
+
+.tiptap th {
+  background: #f5f5f5;
+  font-weight: 600;
+}
+
+.tiptap .selectedCell {
+  background: rgba(37, 99, 235, 0.08);
+}
+
+/* ─── 루비 ─── */
+
+.tiptap ruby {
+  ruby-align: center;
+}
+
+.tiptap ruby rt {
+  font-size: 0.55em;
+  color: #888;
+}
+
+/* ─── 윗/아랫첨자 ─── */
+
+.tiptap sup { font-size: 0.75em; vertical-align: super; }
+.tiptap sub { font-size: 0.75em; vertical-align: sub; }
+
+/* ─── 색상 피커 ─── */
+
+.color-picker {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 3px;
+  padding: 8px;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  z-index: 100;
+}
+
+.color-swatch {
+  width: 24px;
+  height: 24px;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  cursor: pointer;
+  padding: 0;
+}
+
+.color-swatch:hover {
+  transform: scale(1.15);
+}
+
+/* ─── 상태바 ─── */
+
+#statusbar {
+  display: flex;
+  align-items: center;
+  padding: 4px 12px;
+  background: #fafafa;
+  border-top: 1px solid #e0e0e0;
+  font-size: 11px;
+  color: #888;
+  flex-shrink: 0;
+  gap: 16px;
+}
+
+.jieum-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: #f5f5f5;
+  cursor: pointer;
+  font-size: 11px;
+  color: #888;
+  font-family: inherit;
+  transition: all 0.15s;
+}
+
+.jieum-toggle-btn.active {
+  background: #2563eb;
+  color: white;
+  border-color: #2563eb;
+}
+
+.jieum-toggle-btn:hover {
+  opacity: 0.85;
+}

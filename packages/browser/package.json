@@ -1,0 +1,29 @@
+{
+  "name": "@jieum/browser",
+  "version": "0.0.1",
+  "private": true,
+  "description": "지음 브라우저 공통 모듈 — 입력 감지, 후보 팝업, 텍스트 치환",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@jieum/core": "workspace:*"
+  },
+  "devDependencies": {
+    "jsdom": "^30.0.1",
+    "typescript": "^5.7.0",
+    "vitest": "^3.1.0"
+  }
+}

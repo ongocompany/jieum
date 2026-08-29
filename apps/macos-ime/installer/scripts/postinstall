@@ -1,0 +1,36 @@
+#!/bin/bash
+set -eu
+
+TARGET_VOLUME="${3:-/}"
+APP="$TARGET_VOLUME/Library/Input Methods/Jieum.app"
+BIN="$APP/Contents/MacOS/JieumIME"
+LSREGISTER=/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister
+
+if [[ ! -x "$BIN" ]]; then
+  echo "지음 실행 파일을 찾지 못했습니다: $BIN" >&2
+  exit 1
+fi
+
+/usr/bin/codesign --verify --deep --strict "$APP"
+
+# 실제 부팅 볼륨에 설치할 때만 현재 로그인한 사용자의 입력 소스를 갱신한다.
+if [[ "$TARGET_VOLUME" != "/" ]]; then
+  exit 0
+fi
+
+CONSOLE_USER="$(/usr/bin/stat -f '%Su' /dev/console)"
+case "$CONSOLE_USER" in
+  ""|root|loginwindow) exit 0 ;;
+esac
+CONSOLE_UID="$(/usr/bin/id -u "$CONSOLE_USER")"
+
+run_as_user() {
+  /bin/launchctl asuser "$CONSOLE_UID" /usr/bin/sudo -u "$CONSOLE_USER" -- "$@"
+}
+
+run_as_user "$LSREGISTER" -f "$APP" 2>/dev/null || true
+run_as_user "$BIN" --register 2>/dev/null || true
+run_as_user "$BIN" --enable 2>/dev/null || true
+/usr/bin/killall -u "$CONSOLE_USER" TextInputMenuAgent 2>/dev/null || true
+
+exit 0

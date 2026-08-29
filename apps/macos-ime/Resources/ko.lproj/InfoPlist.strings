@@ -1,0 +1,3 @@
+/* 입력 소스 목록에 보이는 이름. 키는 Info.plist의 입력 모드 식별자다. */
+"CFBundleName" = "지음";
+"com.ongocompany.inputmethod.Jieum.hangul" = "지음";

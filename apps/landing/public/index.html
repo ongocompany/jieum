@@ -1,0 +1,388 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>지음 — 단어 단위 한자 입력기</title>
+<meta name="description" content="한글을 입력하는 동안 단어 단위로 한자 후보를 보여 주는 입력기입니다. macOS 베타를 내려받을 수 있습니다.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ctext y='25' font-size='26'%3E音%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Oswald:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&family=Noto+Serif+KR:wght@600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#111111; --canvas:#ffffff; --mist:#f0f0f0; --border:#e2e2e6; --ash:#8a8a92; --fog:#b4b4bb;
+  --mono:"IBM Plex Mono",monospace; --cond:"Oswald",sans-serif;
+  --sans:"Noto Sans KR",system-ui,sans-serif; --serif:"Noto Serif KR",serif;
+  --shadow:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.05);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--canvas);color:var(--ink);font-family:var(--sans);font-size:14px;line-height:1.6}
+.wrap{max-width:1120px;margin:0 auto;padding:0 28px}
+
+nav{display:flex;align-items:center;justify-content:space-between;padding:18px 0}
+nav .brand{font-family:var(--mono);font-weight:600;font-size:17px}
+nav .links{display:flex;align-items:center;gap:18px}
+nav a{font-size:13px;color:var(--ash);text-decoration:none}
+nav a.gh{display:inline-flex;align-items:center;gap:6px;color:var(--ink);border:1px solid var(--border);border-radius:5px;padding:5px 11px;font-family:var(--mono);font-size:12px}
+nav a.gh svg{width:15px;height:15px;fill:currentColor}
+
+/* 첫 화면 */
+.hero{display:grid;grid-template-columns:1.05fr .95fr;gap:52px;align-items:center;padding:64px 0 72px}
+.hero h1{font-weight:700;font-size:34px;line-height:1.3;letter-spacing:-.8px;text-wrap:balance}
+.hero h1 em{font-style:normal;font-family:var(--serif)}
+.hero .lead{margin-top:18px;font-size:15.5px;line-height:1.75;color:#3d3d46;max-width:44ch;text-wrap:pretty}
+.cta{margin-top:26px;display:flex;gap:10px;flex-wrap:wrap}
+.btn{display:inline-block;background:var(--ink);color:#fff;border:none;border-radius:4px;padding:11px 18px;font-family:var(--sans);font-size:14px;font-weight:500;cursor:pointer;text-decoration:none}
+.btn.alt{background:#fff;color:var(--ink);border:1px solid var(--border)}
+.btn.disabled{opacity:.45;cursor:default;color:var(--ash)}
+.cta{align-items:center}
+.soon{font-size:12px;color:var(--fog)}
+.meta{margin-top:14px;font-size:12px;color:var(--fog)}
+
+.demo{background:#fff;border:1px solid var(--border);border-radius:8px;box-shadow:var(--shadow);overflow:hidden}
+.demo .bar{padding:9px 14px;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:11px;color:var(--fog)}
+.demo .body{padding:18px}
+.demo .field{display:block;width:100%;font-family:var(--serif);font-size:26px;line-height:1.35;border:1px solid var(--border);border-radius:4px;padding:12px 14px;background:#fff;color:var(--ink);resize:vertical;outline:none}
+.demo .field:focus{border-color:var(--ink)}
+.demo .field::placeholder{color:var(--fog);font-size:16px;font-family:var(--sans)}
+.dstate{margin-top:10px;font-family:var(--mono);font-size:11px;color:var(--fog);line-height:1.5}
+.dstate.busy{color:var(--ash)}
+.dstate.ready{color:#2d7a2d}
+.dstate.fail{color:#984e4d}
+.demo .caret{display:inline-block;width:2px;height:.85em;background:var(--ink);vertical-align:-1px;animation:b 1s steps(1) infinite}
+@keyframes b{50%{opacity:0}}
+.strip{margin-top:10px;display:flex;border:1px solid var(--border);border-radius:4px;overflow:hidden}
+.c{flex:1;padding:9px 4px;text-align:center;border-right:1px solid var(--border)}
+.c:last-child{border-right:none}
+.c.on{background:var(--ink)}
+.c.on .g,.c.on .i,.c.on .r{color:#fff}
+.c .i{font-family:var(--mono);font-size:10px;color:var(--fog);display:block}
+.c .g{font-family:var(--serif);font-size:24px;line-height:1.15;display:block}
+.c .r{font-size:10px;color:var(--ash);display:block}
+.chips{margin-top:10px;display:flex;gap:6px;flex-wrap:wrap}
+.chips{align-items:center}
+.chip{font-family:var(--mono);font-size:12px;border:1px solid var(--border);border-radius:4px;padding:3px 9px;color:#3d3d46}
+.clab{font-size:11px;color:var(--fog)}
+
+section{padding:52px 0;border-top:1px solid var(--border)}
+h2{font-family:var(--mono);font-size:19px;font-weight:600;margin-bottom:6px}
+.sub{color:var(--ash);margin-bottom:22px;max-width:60ch}
+.warn{border:1px solid var(--ink);border-radius:8px;padding:20px}
+.warn h3{font-size:15px;margin-bottom:10px}
+.warn p{font-size:13.5px;color:#3d3d46}
+.warn p+p{margin-top:7px}
+.key{font-family:var(--mono);font-size:11px;color:var(--ash);border:1px solid var(--border);border-radius:3px;padding:1px 6px}
+
+/* 사용자 조합 */
+.learn{display:grid;grid-template-columns:.9fr 1.1fr;gap:44px;align-items:center}
+.learn .say h2{font-family:var(--sans);font-size:24px;font-weight:700;letter-spacing:-.5px;line-height:1.35;margin-bottom:14px}
+.learn .say p{font-size:15px;line-height:1.75;color:#3d3d46}
+.learn .say p+p{margin-top:12px}
+.learn .say .fine{margin-top:16px;font-size:12.5px;color:var(--ash);line-height:1.7}
+
+.steps{border:1px solid var(--border);border-radius:8px;box-shadow:var(--shadow);overflow:hidden}
+.step{padding:16px 18px;border-bottom:1px solid var(--border)}
+.step:last-child{border-bottom:none}
+.step .n{font-family:var(--mono);font-size:11px;color:var(--fog);margin-bottom:8px}
+.step .line{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.pick{display:inline-flex;align-items:baseline;gap:6px;border:1px solid var(--border);border-radius:4px;padding:4px 10px}
+.pick .g{font-family:var(--serif);font-size:22px}
+.pick .r{font-size:11px;color:var(--ash)}
+.pick.sel{background:var(--ink);border-color:var(--ink)}
+.pick.sel .g,.pick.sel .r{color:#fff}
+.arrow{font-family:var(--mono);color:var(--fog)}
+.step.result{background:var(--mist)}
+.step.result .big{font-family:var(--serif);font-size:32px;line-height:1.2}
+.step .cap{margin-top:8px;font-size:12.5px;color:var(--ash)}
+
+/* 사전 숫자 */
+.nums{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.num{border:1px solid var(--border);border-radius:8px;padding:18px}
+.num .v{font-family:var(--mono);font-size:30px;font-weight:600;letter-spacing:-1px;line-height:1.1}
+.num .k{margin-top:6px;font-size:13.5px;font-weight:500}
+.num .d{margin-top:4px;font-size:12.5px;color:var(--ash);line-height:1.5}
+
+/* 후보 순위와 입력 형식 */
+.feats{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+.feat{border:1px solid var(--border);border-radius:8px;padding:18px}
+.feat .t{font-size:14.5px;font-weight:700;margin-bottom:6px}
+.feat .d{font-size:13px;color:#4a4a52;line-height:1.6}
+
+/* 작동 방식 */
+.flow{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.fstep{border:1px solid var(--border);border-radius:8px;padding:16px}
+.fstep .k{font-family:var(--mono);font-size:12px;color:var(--fog)}
+.fstep .v{margin-top:6px;font-size:13px;color:#3d3d46}
+.stack{margin-top:20px;display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.stack div{border:1px solid var(--border);border-radius:8px;padding:14px 16px;font-size:13px;line-height:1.6}
+.stack b{display:block;font-family:var(--mono);font-size:11px;color:var(--fog);font-weight:400;margin-bottom:4px}
+
+/* 설치 및 사용 방법 */
+.install{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px}
+.plat{border:1px solid var(--border);border-radius:8px;padding:20px}
+.plat h3{font-family:var(--mono);font-size:14px;font-weight:600;margin-bottom:12px}
+.plat ol{margin-left:18px;font-size:13.5px;line-height:1.85;color:#3d3d46}
+.usage{border:1px solid var(--border);border-radius:8px;padding:20px;margin-bottom:20px}
+.usage h3{font-size:14.5px;font-weight:700;margin-bottom:10px}
+.urow{display:grid;grid-template-columns:190px 1fr;gap:10px;font-size:13.5px;padding:7px 0;border-top:1px solid var(--border)}
+.urow:first-of-type{border-top:none}
+.urow .k2{color:var(--ash)}
+
+footer{padding:40px 0 64px;border-top:1px solid var(--border);font-size:12px;color:var(--fog);line-height:1.8}
+footer a{color:var(--ash);text-decoration:none;border-bottom:1px solid var(--border)}
+footer .cols{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:28px;padding-bottom:22px;border-bottom:1px solid var(--border)}
+footer .cols .h{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:7px}
+footer .cols p{font-size:12.5px;color:var(--ash);line-height:1.75}
+footer .biz{padding-top:18px;font-size:11.5px;color:var(--fog)}
+footer .end{margin-top:14px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:11.5px}
+
+@media (max-width:720px){
+  .wrap{padding:0 20px}
+  nav{padding:14px 0}
+  nav .links>a:not(.gh){display:none}
+  .hero{grid-template-columns:1fr;gap:28px;padding:42px 0 52px}
+  .hero>div:last-child{order:1}
+  .hero .demo{order:2}
+  .hero h1{font-size:32px}
+  section{padding:42px 0}
+  .learn{grid-template-columns:1fr;gap:28px}
+  .nums,.feats,.install{grid-template-columns:1fr}
+  .flow,.stack{grid-template-columns:repeat(2,1fr)}
+  .urow{grid-template-columns:1fr;gap:4px;padding:10px 0}
+  footer .cols{grid-template-columns:1fr;gap:20px}
+  footer .end{display:block}
+  footer .end span{display:block;margin-top:10px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<nav>
+  <div class="brand">지음</div>
+  <div class="links">
+    <a href="#download">받기</a><a href="#install">설치</a><a href="#features">기능</a><a href="#how-it-works">작동 방식</a>
+    <a class="gh" href="https://github.com/ongocompany/jieum"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>GitHub</a>
+  </div>
+</nav>
+
+<div class="hero" id="download">
+  <div class="demo">
+    <div class="bar">설치 없이 입력해 볼 수 있습니다</div>
+    <div class="body">
+      <textarea id="demo" class="field" rows="2" spellcheck="false" placeholder="한글을 입력해 보세요"></textarea>
+      <div class="chips" id="samples">
+        <span class="clab">예시</span><span class="chip">사당</span><span class="chip">발전소</span><span class="chip">조선왕조실록</span><span class="chip">거담작용</span>
+      </div>
+      <div class="dstate" id="dstate">사전을 아직 받지 않았습니다 — 입력란을 누르면 받습니다 (약 8.4 MB, 처음 한 번만)</div>
+    </div>
+  </div>
+  <div>
+    <h1>한글로 치고,<br>단어 단위로 <em>漢字</em>를 고릅니다</h1>
+    <p class="lead">한자 변환 키를 눌러 글자마다 찾는 대신, 입력하는 동안 단어 후보를 보여 줍니다. macOS 베타를 먼저 공개합니다. Windows 설치 프로그램은 준비 중입니다.</p>
+    <div class="cta">
+      <a class="btn" href="/download/macos">macOS 0.1.0 베타 내려받기</a>
+      <span class="btn alt disabled" aria-disabled="true">Windows 준비 중</span>
+    </div>
+    <div class="meta">Apple 실리콘 Mac(M1 이상) · macOS 14 이상 · 무료 · 오픈소스</div>
+  </div>
+</div>
+
+<section id="features">
+  <div class="learn">
+    <div class="say">
+      <h2>한 번 만든 조합은<br>다음부터 통째로 나옵니다</h2>
+      <p>사전에 없는 이름·지명·책 이름도 낱자로 한 번 조합하면 다음 입력부터 우선 후보로 표시합니다.</p>
+      <p>등록 화면은 따로 없습니다. 평소처럼 한자를 고르면 지음이 조합을 기억합니다.</p>
+      <p class="fine">사용자 조합은 최대 10,000개까지 이 컴퓨터에 저장됩니다. 직접 지우기 전에는 사라지지 않으며, 다른 기기로 전송되지 않습니다.</p>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="n">처음 — 낱자로 하나씩 고른다</div>
+        <div class="line">
+          <span class="pick sel"><span class="g">金</span><span class="r">김</span></span>
+          <span class="pick sel"><span class="g">洪</span><span class="r">홍</span></span>
+          <span class="pick sel"><span class="g">京</span><span class="r">경</span></span>
+        </div>
+      </div>
+      <div class="step">
+        <div class="n">조합 저장</div>
+        <div class="line">
+          <span style="font-family:var(--mono);font-size:13px">김홍경</span>
+          <span class="arrow">→</span>
+          <span style="font-family:var(--serif);font-size:20px">金洪京</span>
+        </div>
+      </div>
+      <div class="step result">
+        <div class="n">다음부터 — 우선 후보</div>
+        <div class="line"><span class="big">金洪京</span></div>
+        <div class="cap">「김홍경」을 치면 바로 나옵니다. 다시 세 번 고를 일이 없습니다.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>포함된 한자와 한자어</h2>
+  <div class="nums" style="margin-top:22px">
+    <div class="num">
+      <div class="v">466,495</div>
+      <div class="k">표제어</div>
+      <div class="d">표준국어대사전 · 우리말샘. 한글과 한자를 짝지으면 546,359쌍</div>
+    </div>
+    <div class="num">
+      <div class="v">5,978</div>
+      <div class="k">급수 한자</div>
+      <div class="d">한자능력검정 급수가 매겨진 낱자</div>
+    </div>
+    <div class="num">
+      <div class="v">9,460</div>
+      <div class="k">대법원 인명용 한자</div>
+      <div class="d">대법원 인명용 한자표 기준. 확장 B/C 이상 456자는 후보에서 제외됩니다</div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>후보를 고르는 기준</h2>
+  <div class="feats" style="margin-top:22px">
+    <div class="feat">
+      <div class="t">앞 문맥</div>
+      <div class="d">커서 앞 <b>200자</b>에서 관련 표현을 찾아 후보 순서에 반영합니다. 앞에 참고할 것이 없으면 사전 순위와 사용 이력을 사용합니다.</div>
+    </div>
+    <div class="feat">
+      <div class="t">사용 이력</div>
+      <div class="d">최근에 고른 후보를 앞쪽에 표시합니다. 오래 쓰지 않은 선택은 그 뒤에 입력한 양이 쌓일수록 뒤로 밀립니다.</div>
+    </div>
+    <div class="feat">
+      <div class="t">병기 형식</div>
+      <div class="d"><b>漢字</b> · <b>한자(漢字)</b> · <b>漢字(한자)</b> 가운데 필요한 형식을 고를 수 있습니다.</div>
+    </div>
+    <div class="feat">
+      <div class="t">로컬 처리</div>
+      <div class="d">사전 조회와 사용 이력 저장은 모두 이 컴퓨터에서 처리합니다. 계정이나 외부 서버가 필요하지 않습니다.</div>
+    </div>
+  </div>
+</section>
+
+<section id="how-it-works">
+  <h2>작동 방식</h2>
+  <p class="sub">macOS와 Windows 모두 같은 엔진을 사용합니다.</p>
+  <div class="flow">
+    <div class="fstep"><div class="k">01</div><div class="v">한글을 친다</div></div>
+    <div class="fstep"><div class="k">02</div><div class="v">사전에서 가장 긴 표제어를 찾는다</div></div>
+    <div class="fstep"><div class="k">03</div><div class="v">빈도 · 앞 문맥 · 사용 이력 · 사용자 조합으로 순위를 매긴다</div></div>
+    <div class="fstep"><div class="k">04</div><div class="v">후보를 띄운다</div></div>
+  </div>
+  <div class="stack">
+    <div><b>엔진</b>TypeScript</div>
+    <div><b>macOS</b>Swift · InputMethodKit</div>
+    <div><b>Windows</b>Rust · Text Services Framework</div>
+    <div><b>사전</b>음절 Trie 바이너리</div>
+  </div>
+</section>
+
+<section id="install">
+  <h2>설치 및 사용 방법</h2>
+  <div class="install" style="margin-top:22px">
+    <div class="plat">
+      <h3>macOS</h3>
+      <ol>
+        <li>macOS 베타 설치 파일을 내려받아 DMG를 엽니다</li>
+        <li><code>지음 설치.pkg</code>를 두 번 클릭합니다<br><small>macOS가 막으면 한 번 열기를 시도한 뒤 시스템 설정의 <b>개인정보 보호 및 보안</b>에서 <b>그래도 열기</b>를 선택합니다</small></li>
+        <li>설치 도중 이 Mac의 관리자 암호를 입력합니다</li>
+        <li>화면 오른쪽 위 메뉴 막대의 입력 소스 메뉴에서 <b>지음</b>을 선택합니다</li>
+      </ol>
+    </div>
+    <div class="plat">
+      <h3>Windows</h3>
+      <p style="font-size:13.5px;line-height:1.8;color:#3d3d46">설치 프로그램을 준비하고 있습니다. 공개된 코드를 개발자가 직접 빌드해 시험할 수는 있지만, 일반 사용자용 설치 파일은 아직 없습니다.</p>
+    </div>
+  </div>
+  <div class="warn" style="margin-bottom:20px">
+    <h3>처음 설치할 때 macOS가 막을 수 있습니다</h3>
+    <p>이 설치 파일은 아직 Apple의 Developer ID 서명과 공증을 받지 않았습니다. macOS가 설치를 막으면 한 번 열기를 시도한 뒤 <b>시스템 설정 → 개인정보 보호 및 보안</b>의 보안 영역에서 <b>그래도 열기</b>를 선택합니다.</p>
+  </div>
+  <div class="usage">
+    <h3>쓰는 법</h3>
+    <div class="urow"><div class="k2">후보 고르기</div><div>숫자 키 <span class="key">1</span>~<span class="key">9</span>, 또는 <span class="key">←</span> <span class="key">→</span> 로 옮기고 <span class="key">Enter</span></div></div>
+    <div class="urow"><div class="k2">한글 그대로 두기</div><div><span class="key">Esc</span> 또는 그냥 계속 치면 됩니다</div></div>
+    <div class="urow"><div class="k2">사용자 조합 지우기</div><div>macOS는 입력 소스 메뉴의 <b>이 후보 잊기</b>, Windows는 <span class="key">Ctrl+Delete</span></div></div>
+    <div class="urow"><div class="k2">한글 전용 모드</div><div><span class="key">왼쪽 ⌘+Shift</span> (macOS) · <span class="key">한자 키</span> (Windows)로 한자 후보 모드와 한글 전용 모드를 오갑니다</div></div>
+  </div>
+  <div class="warn">
+    <h3>아래한글은 현재 지원하지 않습니다</h3>
+    <p>아래한글에서 지음을 선택하면 한글 조합이 깨질 수 있습니다.</p>
+    <p><code>Alt+F2</code>를 눌러 「현재 글자판」과 「제1 글자판」을 <b>한국어</b>로 설정하면 한컴 입력기로 돌아갈 수 있습니다.</p>
+  </div>
+</section>
+
+<footer>
+  <div class="cols">
+    <div>
+      <div class="h">지음</div>
+      <p>단어 단위 한자 입력기<br>macOS · Windows · 무료 · 오픈소스</p>
+    </div>
+    <div>
+      <div class="h">온고컴퍼니</div>
+      <p><a href="https://ongo.kr">ongo.kr</a><br><a href="https://hanjahanja.co.kr">한자한자</a> — 모바일 한자 학습 앱</p>
+    </div>
+    <div>
+      <div class="h">문의</div>
+      <p><a href="mailto:jieum@ongo.kr">jieum@ongo.kr</a><br><a href="https://github.com/ongocompany/jieum">github.com/ongocompany/jieum</a></p>
+    </div>
+  </div>
+  <div class="biz">
+    온고컴퍼니 · 대표 이진우 · 사업자등록번호 111-93-97054<br>
+    서울특별시 송파구 오금로27길 50-21, 2층 201호 · 02-3478-8537 · jieum@ongo.kr
+  </div>
+  <div class="end">
+    <span>© 2026 온고컴퍼니</span>
+    <span>표준국어대사전 · 우리말샘 (국립국어원, CC BY-SA 2.0 KR) · 위키문헌 (CC BY-SA 4.0) · 대법원 인명용 한자표 — 코드 Apache 2.0 · 사전 CC BY-SA · libhangul LGPL 2.1 (동적 링크)</span>
+  </div>
+</footer>
+</div>
+
+<script src="/jieum.iife.js"></script>
+<script>
+(function () {
+  var box = document.getElementById('demo');
+  var state = document.getElementById('dstate');
+  if (!box || !state) return;
+
+  var status = 'idle';   // idle | loading | ready | failed
+
+  function say(text, cls) {
+    state.textContent = text;
+    state.className = 'dstate' + (cls ? ' ' + cls : '');
+  }
+
+  // 사전은 46만 표제어라 압축해도 9 MB다. 페이지를 여는 값으로는 너무 비싸서
+  // 칸을 실제로 쓰려는 순간까지 미룬다. 두 번째부터는 IndexedDB 캐시라 즉시 뜬다.
+  function load() {
+    if (status !== 'idle') return Promise.resolve(status === 'ready');
+    status = 'loading';
+    say('사전을 받는 중입니다…', 'busy');
+    return window.Jieum.init({ dictUrl: '/data/', target: '#demo' })
+      .then(function (j) {
+        status = 'ready';
+        say('표제어 ' + j.engine.dictSize.toLocaleString() + '개 — 입력해 보세요', 'ready');
+        box.focus();
+        return true;
+      })
+      .catch(function (err) {
+        status = 'failed';
+        say('사전을 받지 못했습니다. 페이지를 새로 고쳐 주세요.', 'fail');
+        console.error('[지음] 사전 로드 실패', err);
+        return false;
+      });
+  }
+
+  box.addEventListener('focus', load, { once: false });
+  box.addEventListener('pointerdown', load);
+
+})();
+</script>
+</body>
+</html>

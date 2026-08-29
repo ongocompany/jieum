@@ -1,0 +1,29 @@
+{
+  "name": "jieum",
+  "version": "0.0.1",
+  "private": true,
+  "description": "지음 — 문맥 인식형 한자입력기 (Context-aware Hanja IME)",
+  "scripts": {
+    "dev": "pnpm --filter @jieum/chrome-extension dev",
+    "build": "pnpm --filter @jieum/core build && pnpm --filter @jieum/browser build && pnpm --filter @jieum/sdk build",
+    "build:sdk": "pnpm --filter @jieum/core build && pnpm --filter @jieum/browser build && pnpm --filter @jieum/sdk build",
+    "build:dict": "pnpm --filter @jieum/dict-builder build:dict",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "typecheck": "pnpm -r run typecheck"
+  },
+  "type": "module",
+  "devDependencies": {
+    "@eslint/js": "^9.0.0",
+    "eslint": "^9.0.0",
+    "prettier": "^3.4.0",
+    "typescript-eslint": "^8.0.0"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": ["esbuild"]
+  },
+  "engines": {
+    "node": ">=20",
+    "pnpm": ">=10"
+  }
+}

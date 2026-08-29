@@ -1,0 +1,26 @@
+{
+  "identifier": "default",
+  "description": "jieum Editor 기본 권한",
+  "windows": ["main"],
+  "permissions": [
+    "core:default",
+    "core:event:default",
+    "core:event:allow-listen",
+    "core:event:allow-emit",
+    "dialog:default",
+    "dialog:allow-open",
+    "dialog:allow-save",
+    "dialog:allow-message",
+    "dialog:allow-ask",
+    "fs:default",
+    "fs:allow-read-text-file",
+    "fs:allow-write-text-file",
+    "fs:allow-write-file",
+    {
+      "identifier": "fs:scope",
+      "allow": [
+        { "path": "**" }
+      ]
+    }
+  ]
+}

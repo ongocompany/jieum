@@ -1,0 +1,96 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build outputs
+dist/
+build/
+# bun build --compile 산출물 (60MB 단일 바이너리)
+packages/engine-server/bin/
+# SwiftPM 빌드 산출물
+.build/
+data/source/*
+# hanja-readings.json은 예외 — Unihan.zip(자매 레포)을 매 빌드마다 요구하지
+# 않도록 생성물을 커밋한다. 재생성은 build-readings 스크립트로 수동 실행.
+# (data/source/를 통째로 무시하면 하위 파일을 !로 되살릴 수 없어 data/source/*로 바꿨다.)
+!data/source/hanja-readings.json
+# wikisource-pairs.json도 예외 — 재생성에 위키문헌 덤프 140MB와 골든셋 114MB가
+# 필요한데 둘 다 커밋 대상이 아니다. 중간 산출물만 두면 사전 빌드는 덤프 없이
+# 재현된다. 재생성은 @jieum/eval의 extract-supplement.
+!data/source/wikisource-pairs.json
+data/build/
+**/public/data/
+*.dat
+*.dat.gz
+*.tsbuildinfo
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Test coverage
+coverage/
+
+# WXT
+.wxt/
+.output/
+
+# Tauri
+**/src-tauri/target/
+**/src-tauri/gen/
+
+# Claude / OMC
+.claude.json
+.omc/
+**/.omc/
+
+# Python
+.venv/
+*.pyc
+
+# Foreman (세션 산출물 — 현재 미사용 체제)
+.foreman/
+.foreman-tasks/
+.foreman-worktrees/
+
+# Graphify generated output
+**/graphify-out/
+
+# Archive (원본 데이터, 일회성 스크립트)
+archive/
+.gstack/
+
+# libhangul (LGPL 2.1) — repo에 담지 않고 스크립트가 내려받아 동적 링크한다
+apps/macos-ime/vendor/
+apps/macos-ime/Sources/CHangul/include/
+
+# 윈도우 입력기 빌드 산출물
+apps/windows-ime/target/
+apps/windows-ime/build/
+
+# 채점 이력 — 최신(suggestion-latest.json)만 남기고 시각별 사본은 로컬에만 둔다
+data/eval/suggestion-2*.json
+
+# 골든셋 원본 덤프와 생성물 — 재생성 가능하므로 커밋하지 않는다
+data/golden-src/
+data/eval/golden-*.jsonl
+
+# 저장소 밖을 가리키는 개인 문서 — 공개 트리에도 들어가지 않는다
+CLAUDE.local.md
+AGENTS.local.md

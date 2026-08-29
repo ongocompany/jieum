@@ -1,0 +1,40 @@
+{
+  "name": "@jieum/editor",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "test": "vitest run",
+    "tauri": "tauri",
+    "tauri:dev": "tauri dev",
+    "tauri:build": "tauri build"
+  },
+  "dependencies": {
+    "@jieum/browser": "workspace:*",
+    "@jieum/core": "workspace:*",
+    "@jieum/sdk": "workspace:*",
+    "@tauri-apps/api": "^2.0.0",
+    "@tauri-apps/plugin-dialog": "^2.6.0",
+    "@tauri-apps/plugin-fs": "^2.4.5",
+    "@tiptap/core": "^3.29.2",
+    "@tiptap/extension-subscript": "^3.29.2",
+    "@tiptap/extension-superscript": "^3.29.2",
+    "@tiptap/extension-table": "^3.29.2",
+    "@tiptap/extension-text-align": "^3.29.2",
+    "@tiptap/extension-text-style": "^3.29.2",
+    "@tiptap/pm": "^3.29.2",
+    "@tiptap/starter-kit": "^3.29.2",
+    "docx": "^9.6.1",
+    "file-saver": "^2.0.5"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.0.0",
+    "@types/file-saver": "^2.0.7",
+    "jsdom": "^30.0.1",
+    "typescript": "^5.8.3",
+    "vite": "^6.4.0",
+    "vitest": "^3.2.4"
+  }
+}

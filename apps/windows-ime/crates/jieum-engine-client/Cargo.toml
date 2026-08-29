@@ -1,0 +1,19 @@
+[package]
+name = "jieum-engine-client"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+description = "지음 엔진 클라이언트 — named pipe 위의 NDJSON (프로토콜 v1)"
+
+[dependencies]
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true }
+windows = { workspace = true, features = [
+    "Win32_Foundation",
+    # CreateFileW가 SECURITY_ATTRIBUTES를 받으므로 이 feature 없이는 함수 자체가 없다
+    "Win32_Security",
+    "Win32_Storage_FileSystem",
+    "Win32_System_IO",
+    # CreateEventW / WaitForSingleObject — 중첩 입출력의 완료를 기다리는 데 쓴다
+    "Win32_System_Threading",
+] }
