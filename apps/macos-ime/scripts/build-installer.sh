@@ -2,7 +2,7 @@
 #
 # 일반 사용자용 macOS 설치 파일을 만든다.
 #
-# 결과: dist/Jieum-<version>-macOS-arm64-notarized.dmg
+# 결과: 공증 프로필이 있으면 ...-notarized.dmg, 없으면 ...-signed.dmg
 # DMG 안의 .pkg가 Jieum.app을 /Library/Input Methods에 설치하고 현재 로그인한
 # 사용자의 입력 소스로 등록·활성화한다.
 #
@@ -14,15 +14,29 @@ BUNDLE="$APP_DIR/build/Jieum.app"
 WORK="$APP_DIR/build/installer"
 OUT_DIR="${JIEUM_RELEASE_DIR:-$REPO_ROOT/dist}"
 VERSION="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$APP_DIR/Resources/Info.plist")"
-ARCH="$(uname -m)"
+ARCH="${JIEUM_MAC_ARCH:-$(uname -m)}"
 APPLICATION_IDENTITY="${JIEUM_CODESIGN_IDENTITY:-Developer ID Application: jinwoo lee (9AGG9898BB)}"
 INSTALLER_IDENTITY="${JIEUM_INSTALLER_IDENTITY:-Developer ID Installer: jinwoo lee (9AGG9898BB)}"
 NOTARY_PROFILE="${JIEUM_NOTARY_PROFILE:-}"
-
-if [[ "$ARCH" != "arm64" ]]; then
-  echo "지금 설치 파일은 arm64 Mac용이다 (현재: $ARCH)." >&2
-  exit 1
+if [[ -n "$NOTARY_PROFILE" ]]; then
+  RELEASE_SUFFIX=notarized
+else
+  RELEASE_SUFFIX=signed
 fi
+
+case "$ARCH" in
+  arm64)
+    BUN_TARGET=bun-darwin-arm64
+    MAC_REQUIREMENT='Apple Silicon Mac(M1 이상)과 macOS 14 이상'
+    ;;
+  x86_64)
+    BUN_TARGET=bun-darwin-x64-baseline
+    MAC_REQUIREMENT='Intel Mac과 macOS 14 이상'
+    ;;
+  *) echo "지원하지 않는 Mac 아키텍처: $ARCH" >&2; exit 1 ;;
+esac
+LIBHANGUL_PREFIX="$APP_DIR/vendor/libhangul-$ARCH"
+ENGINE_BIN="$APP_DIR/build/engine-$ARCH/jieum-engine"
 
 case "$WORK" in
   "$APP_DIR"/build/installer) ;;
@@ -38,8 +52,14 @@ security find-identity -v | grep -Fq "\"$INSTALLER_IDENTITY\"" || {
   exit 1
 }
 
-pnpm --dir "$REPO_ROOT" --filter @jieum/engine-server compile
-JIEUM_BUILD_CONFIG=release JIEUM_CODESIGN_IDENTITY="$APPLICATION_IDENTITY" \
+JIEUM_MAC_ARCH="$ARCH" JIEUM_LIBHANGUL_PREFIX="$LIBHANGUL_PREFIX" \
+  "$APP_DIR/scripts/fetch-libhangul.sh"
+mkdir -p "$(dirname "$ENGINE_BIN")"
+bun build --compile --target="$BUN_TARGET" \
+  "$REPO_ROOT/packages/engine-server/src/main.ts" --outfile "$ENGINE_BIN"
+JIEUM_BUILD_CONFIG=release JIEUM_MAC_ARCH="$ARCH" \
+  JIEUM_LIBHANGUL_PREFIX="$LIBHANGUL_PREFIX" JIEUM_ENGINE_BIN="$ENGINE_BIN" \
+  JIEUM_CODESIGN_IDENTITY="$APPLICATION_IDENTITY" \
   "$APP_DIR/scripts/build-app.sh"
 
 required=(
@@ -64,6 +84,10 @@ ditto "$BUNDLE" "$WORK/root/Library/Input Methods/Jieum.app"
 xattr -cr "$WORK/root/Library/Input Methods/Jieum.app"
 cp -R "$APP_DIR/installer/resources/ko.lproj/." "$WORK/resources/ko.lproj/"
 cp "$REPO_ROOT/LICENSE" "$WORK/resources/ko.lproj/license.txt"
+for file in "$WORK/resources/ko.lproj"/*.html; do
+  sed "s|@@MAC_REQUIREMENT@@|$MAC_REQUIREMENT|g" "$file" > "$file.tmp"
+  mv "$file.tmp" "$file"
+done
 
 COPYFILE_DISABLE=1 pkgbuild \
   --root "$WORK/root" \
@@ -74,7 +98,7 @@ COPYFILE_DISABLE=1 pkgbuild \
   --scripts "$APP_DIR/installer/scripts" \
   "$WORK/Jieum-component.pkg"
 
-sed "s/@@VERSION@@/$VERSION/g" \
+sed -e "s/@@VERSION@@/$VERSION/g" -e "s/@@ARCH@@/$ARCH/g" \
   "$APP_DIR/installer/Distribution.xml" > "$WORK/Distribution.xml"
 
 productbuild \
@@ -88,9 +112,10 @@ pkgutil --expand-full "$WORK/Jieum-$VERSION-macOS-$ARCH.pkg" "$WORK/expanded"
 pkgutil --payload-files "$WORK/Jieum-component.pkg" | grep -q '^\./Library/Input Methods/Jieum.app/'
 
 cp "$WORK/Jieum-$VERSION-macOS-$ARCH.pkg" "$WORK/dmg/지음 $VERSION 설치.pkg"
-cp "$APP_DIR/installer/dmg-readme.txt" "$WORK/dmg/먼저 읽어 주세요.txt"
+sed -e "s|@@MAC_REQUIREMENT@@|$MAC_REQUIREMENT|g" \
+  "$APP_DIR/installer/dmg-readme.txt" > "$WORK/dmg/먼저 읽어 주세요.txt"
 
-DMG="$OUT_DIR/Jieum-$VERSION-macOS-$ARCH-notarized.dmg"
+DMG="$OUT_DIR/Jieum-$VERSION-macOS-$ARCH-$RELEASE_SUFFIX.dmg"
 hdiutil create \
   -volname "지음 $VERSION 설치" \
   -srcfolder "$WORK/dmg" \

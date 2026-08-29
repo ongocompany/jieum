@@ -13,12 +13,14 @@
 
 ## 다운로드
 
-- [macOS 0.1.0 베타 내려받기](https://jieum.ongo.kr/download/macos) — Apple 실리콘 Mac(M1 이상), macOS 14 이상
-- Windows 설치 프로그램은 준비 중입니다. 소스에서 빌드하는 방법은
-  [Windows 입력기 문서](apps/windows-ime/README.md)에 있습니다.
+- [macOS 0.1.0 베타 — Apple Silicon](https://jieum.ongo.kr/download/macos/arm64) — M1 이상, macOS 14 이상
+- [macOS 0.1.0 베타 — Intel](https://jieum.ongo.kr/download/macos/intel) — Intel Mac, macOS 14 이상
+- [Windows 0.1.0 베타 — x64](https://jieum.ongo.kr/download/windows) — Windows 10·11
 
 설치 방법과 기본 조작은 [지음 웹사이트](https://jieum.ongo.kr)에서 확인할 수 있습니다.
 macOS 설치 파일은 Developer ID로 서명하고 Apple 공증을 거쳤습니다.
+Windows 설치 파일은 아직 코드 서명 전이어서 설치할 때 `알 수 없는 게시자` 경고가
+나타날 수 있습니다.
 
 ## 주요 기능
 

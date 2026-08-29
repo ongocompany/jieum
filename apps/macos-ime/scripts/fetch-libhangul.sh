@@ -15,7 +15,13 @@ set -euo pipefail
 APP_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 VENDOR="$APP_DIR/vendor"
 SRC="$VENDOR/libhangul-src"
-PREFIX="$VENDOR/libhangul"
+ARCH="${JIEUM_MAC_ARCH:-$(uname -m)}"
+case "$ARCH" in
+  arm64|x86_64) ;;
+  *) echo "지원하지 않는 Mac 아키텍처: $ARCH" >&2; exit 1 ;;
+esac
+PREFIX="${JIEUM_LIBHANGUL_PREFIX:-$VENDOR/libhangul-$ARCH}"
+BUILD_DIR="$SRC/build-$ARCH"
 # 재현 가능하게 고정한다. 올릴 때는 손으로 올리고 두벌식 조합을 다시 확인한다.
 REF="${JIEUM_LIBHANGUL_REF:-main}"
 
@@ -30,17 +36,18 @@ else
   echo "[지음] 이미 받아 둔 소스를 쓴다: $SRC"
 fi
 
-echo "[지음] 빌드 (동적 라이브러리)"
-cmake -S "$SRC" -B "$SRC/build" \
+echo "[지음] 빌드 (동적 라이브러리 · $ARCH)"
+cmake -S "$SRC" -B "$BUILD_DIR" \
   -DBUILD_SHARED_LIBS=ON \
   -DBUILD_TESTING=OFF \
   -DENABLE_UNIT_TEST=OFF \
   -DENABLE_TOOLS=OFF \
   -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_OSX_ARCHITECTURES="$ARCH" \
   -DCMAKE_OSX_DEPLOYMENT_TARGET=14.0 >/dev/null
-cmake --build "$SRC/build" -j"$(sysctl -n hw.ncpu)" >/dev/null
+cmake --build "$BUILD_DIR" -j"$(sysctl -n hw.ncpu)" >/dev/null
 
-DYLIB="$(find "$SRC/build" -name 'libhangul.*.dylib' -type f | head -1)"
+DYLIB="$(find "$BUILD_DIR" -name 'libhangul.*.dylib' -type f | head -1)"
 [[ -n "$DYLIB" ]] || { echo "[지음] dylib을 찾지 못했다" >&2; exit 1; }
 
 echo "[지음] 설치: $PREFIX"
@@ -60,4 +67,5 @@ codesign --force --sign - "$PREFIX/lib/libhangul.1.dylib" >/dev/null 2>&1 || tru
 echo "[지음] 완료"
 echo "  헤더 : $PREFIX/include/hangul.h"
 echo "  라이브러리: $PREFIX/lib/libhangul.1.dylib"
+echo "  아키텍처: $ARCH"
 echo "  라이선스: LGPL 2.1 — $SRC/COPYING (배포 시 함께 넣어야 한다)"

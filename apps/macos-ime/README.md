@@ -5,26 +5,37 @@ InputMethodKit으로 만든 macOS 시스템 입력기입니다. Swift로 작성�
 
 ## 요구 사항
 
-- Apple 실리콘 Mac(M1 이상)
+내려받아 쓰려면 이것만 있으면 됩니다.
+
+- Apple Silicon Mac 또는 Intel Mac
 - macOS 14 이상
+
+웹사이트에서 내려받는 설치 파일에는 엔진과 사전이 함께 들어 있습니다.
+
+직접 빌드하려면 위에 더해 다음이 필요합니다.
+
 - Xcode Command Line Tools
 - Node.js 20 이상과 pnpm 10 이상
 - Bun
 - 사전 빌드 결과
 
-공개 저장소에는 사전 원본과 빌드 결과가 포함되지 않습니다. 사전 파일이 없으면 한글 조합은
-동작하지만 한자 후보는 표시되지 않습니다.
+공개 저장소에는 사전 원본과 빌드 결과가 포함되지 않습니다. 직접 빌드할 때 사전 파일이
+없으면 한글 조합은 동작하지만 한자 후보는 표시되지 않습니다.
 
 ## 설치
 
-[지음 웹사이트에서 macOS 베타 설치 파일을 내려받습니다.](https://jieum.ongo.kr/download/macos)
+[지음 웹사이트](https://jieum.ongo.kr/#download)에서 Mac 종류에 맞는 베타 설치 파일을
+내려받습니다. 종류는 화면 왼쪽 위 Apple 메뉴()의 `이 Mac에 관하여`에서 확인합니다.
 
-1. DMG를 열고 `지음 설치.pkg`를 두 번 클릭합니다.
+- [Apple Silicon용](https://jieum.ongo.kr/download/macos/arm64) — `칩`이 보이는 Mac
+- [Intel용](https://jieum.ongo.kr/download/macos/intel) — `프로세서`가 보이는 Mac
+
+1. 내려받은 `.dmg` 파일을 두 번 클릭해 열고, 그 안의 `지음 설치.pkg`를 두 번 클릭합니다.
 2. 설치 프로그램의 안내에 따라 관리자 암호를 입력하고 설치합니다.
 3. 화면 오른쪽 위 메뉴 막대의 입력 소스 메뉴에서 지음을 선택합니다.
 
 설치 프로그램이 입력 소스 등록까지 처리하므로 앱을 직접 입력기 폴더로 옮길 필요는 없습니다.
-배포 파일은 Developer ID로 서명하고 Apple 공증을 거칩니다.
+배포 파일은 Developer ID로 서명하고 Apple 공증을 마쳤습니다.
 
 ## 개발용 빌드
 

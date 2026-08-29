@@ -23,6 +23,8 @@ import PackageDescription
 let packageDir = Context.packageDirectory
 let hangulHeader = "\(packageDir)/Sources/CHangul/include/hangul.h"
 let hasLibhangul = FileManager.default.fileExists(atPath: hangulHeader)
+let libhangulPrefix = ProcessInfo.processInfo.environment["JIEUM_LIBHANGUL_PREFIX"]
+    ?? "\(packageDir)/vendor/libhangul"
 
 var targets: [Target] = []
 var imeDependencies: [Target.Dependency] = []
@@ -41,12 +43,12 @@ if hasLibhangul {
     imeSwiftSettings.append(.define("HAS_LIBHANGUL"))
     imeLinkerSettings.append(
         .unsafeFlags([
-            "-L\(packageDir)/vendor/libhangul/lib",
+            "-L\(libhangulPrefix)/lib",
             "-lhangul",
             // 앱 번들 안의 Frameworks를 먼저 보고, 없으면 개발용 vendor 경로를 본다.
             // 전자는 배포된 .app이, 후자는 .build에서 바로 돌릴 때가 쓴다.
             "-Xlinker", "-rpath", "-Xlinker", "@executable_path/../Frameworks",
-            "-Xlinker", "-rpath", "-Xlinker", "\(packageDir)/vendor/libhangul/lib",
+            "-Xlinker", "-rpath", "-Xlinker", "\(libhangulPrefix)/lib",
         ])
     )
 }

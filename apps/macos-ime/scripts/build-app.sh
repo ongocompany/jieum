@@ -10,13 +10,19 @@ set -euo pipefail
 APP_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 REPO_ROOT="$(cd "$APP_DIR/../.." && pwd)"
 CONFIG="${JIEUM_BUILD_CONFIG:-debug}"
+ARCH="${JIEUM_MAC_ARCH:-$(uname -m)}"
+case "$ARCH" in
+  arm64|x86_64) ;;
+  *) echo "지원하지 않는 Mac 아키텍처: $ARCH" >&2; exit 1 ;;
+esac
+LIBHANGUL_PREFIX="${JIEUM_LIBHANGUL_PREFIX:-$APP_DIR/vendor/libhangul-$ARCH}"
 BUNDLE="$APP_DIR/build/Jieum.app"
 
-echo "[지음] Swift 빌드 ($CONFIG)"
+echo "[지음] Swift 빌드 ($CONFIG · $ARCH)"
 cd "$APP_DIR"
-swift build -c "$CONFIG"
+JIEUM_LIBHANGUL_PREFIX="$LIBHANGUL_PREFIX" swift build -c "$CONFIG" --arch "$ARCH"
 
-BIN_PATH="$(swift build -c "$CONFIG" --show-bin-path)/JieumIME"
+BIN_PATH="$(JIEUM_LIBHANGUL_PREFIX="$LIBHANGUL_PREFIX" swift build -c "$CONFIG" --arch "$ARCH" --show-bin-path)/JieumIME"
 if [[ ! -x "$BIN_PATH" ]]; then
   echo "[지음] 빌드 산출물을 찾지 못했다: $BIN_PATH" >&2
   exit 1
@@ -40,7 +46,7 @@ done
 # libhangul(LGPL 2.1)은 **동적 링크**로 붙는다. 정적으로 넣으면 우리 바이너리
 # 전체에 재링크 허용 의무가 붙는다. dylib을 따로 넣어 두면 사용자가 그것만
 # 교체할 수 있어 의무가 충족된다 (구름입력기의 서브모듈 격리와 같은 취지).
-HANGUL_DYLIB="$APP_DIR/vendor/libhangul/lib/libhangul.1.dylib"
+HANGUL_DYLIB="$LIBHANGUL_PREFIX/lib/libhangul.1.dylib"
 if [[ -f "$HANGUL_DYLIB" ]]; then
   mkdir -p "$BUNDLE/Contents/Frameworks"
   cp "$HANGUL_DYLIB" "$BUNDLE/Contents/Frameworks/"
@@ -60,7 +66,7 @@ fi
 
 # 엔진 바이너리가 빌드돼 있으면 번들에 넣는다. 없으면 JIEUM_ENGINE_BIN으로
 # 가리키면 되므로 실패로 보지 않는다 (개발 중에는 엔진만 따로 다시 컴파일한다).
-ENGINE_BIN="$REPO_ROOT/packages/engine-server/bin/jieum-engine"
+ENGINE_BIN="${JIEUM_ENGINE_BIN:-$REPO_ROOT/packages/engine-server/bin/jieum-engine}"
 if [[ -x "$ENGINE_BIN" ]]; then
   cp "$ENGINE_BIN" "$BUNDLE/Contents/Resources/jieum-engine"
   echo "[지음] 엔진 바이너리를 번들에 넣었다 ($(du -h "$ENGINE_BIN" | cut -f1))"

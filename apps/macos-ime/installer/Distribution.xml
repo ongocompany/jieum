@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <installer-gui-script minSpecVersion="2">
   <title>지음</title>
-  <options customize="never" rootVolumeOnly="true" hostArchitectures="arm64"/>
+  <options customize="never" rootVolumeOnly="true" hostArchitectures="@@ARCH@@"/>
   <domains enable_anywhere="false" enable_currentUserHome="false" enable_localSystem="true"/>
   <welcome file="welcome.html"/>
   <readme file="readme.html"/>
