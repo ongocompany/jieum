@@ -93,15 +93,24 @@ else
   echo "[지음] 사전을 번들에 넣었다 (${#DICT_FILES[@]}개)"
 fi
 
-# 임시(ad-hoc) 서명. 배포용 Developer ID 서명과 공증은 M4에서.
-# 중첩된 코드(dylib)를 먼저 서명하고 바깥을 나중에 서명한다 — 순서가 반대면
-# 바깥 서명이 안쪽의 서명 없음을 발견하고 실패한다.
-echo "[지음] ad-hoc 서명"
-if [[ -f "$BUNDLE/Contents/Frameworks/libhangul.1.dylib" ]]; then
-  codesign --force --sign - --timestamp=none \
-    "$BUNDLE/Contents/Frameworks/libhangul.1.dylib"
+# 개발 빌드는 ad-hoc, 배포 빌드는 JIEUM_CODESIGN_IDENTITY로 Developer ID 서명을 한다.
+# 중첩된 코드를 먼저 서명하고 바깥을 나중에 서명한다 — 순서가 반대면
+# 바깥 서명이 안쪽의 옛 서명을 품어 검증과 공증이 실패한다.
+CODESIGN_IDENTITY="${JIEUM_CODESIGN_IDENTITY:--}"
+if [[ "$CODESIGN_IDENTITY" == "-" ]]; then
+  SIGN_ARGS=(--force --sign - --timestamp=none)
+  echo "[지음] ad-hoc 서명"
+else
+  SIGN_ARGS=(--force --sign "$CODESIGN_IDENTITY" --options runtime --timestamp)
+  echo "[지음] Developer ID 서명: $CODESIGN_IDENTITY"
 fi
-codesign --force --sign - --timestamp=none "$BUNDLE"
-codesign --verify --verbose=1 "$BUNDLE" 2>&1 | sed 's/^/[지음] /'
+if [[ -f "$BUNDLE/Contents/Frameworks/libhangul.1.dylib" ]]; then
+  codesign "${SIGN_ARGS[@]}" "$BUNDLE/Contents/Frameworks/libhangul.1.dylib"
+fi
+if [[ -x "$BUNDLE/Contents/Resources/jieum-engine" ]]; then
+  codesign "${SIGN_ARGS[@]}" "$BUNDLE/Contents/Resources/jieum-engine"
+fi
+codesign "${SIGN_ARGS[@]}" "$BUNDLE"
+codesign --verify --deep --strict --verbose=2 "$BUNDLE" 2>&1 | sed 's/^/[지음] /'
 
 echo "[지음] 완료: $BUNDLE"

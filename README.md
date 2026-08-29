@@ -18,10 +18,7 @@
   [Windows 입력기 문서](apps/windows-ime/README.md)에 있습니다.
 
 설치 방법과 기본 조작은 [지음 웹사이트](https://jieum.ongo.kr)에서 확인할 수 있습니다.
-
-macOS 베타 설치 파일은 아직 Apple의 Developer ID 서명과 공증을 받지 않았습니다.
-macOS가 설치를 막으면 한 번 열기를 시도한 뒤 `시스템 설정 → 개인정보 보호 및 보안`의
-보안 영역에서 `그래도 열기`를 선택해야 합니다.
+macOS 설치 파일은 Developer ID로 서명하고 Apple 공증을 거쳤습니다.
 
 ## 주요 기능
 
