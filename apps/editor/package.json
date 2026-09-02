@@ -26,7 +26,7 @@
     "@tiptap/extension-text-style": "^3.29.2",
     "@tiptap/pm": "^3.29.2",
     "@tiptap/starter-kit": "^3.29.2",
-    "docx": "^9.6.1",
+    "docx": "^9.7.1",
     "file-saver": "^2.0.5"
   },
   "devDependencies": {
