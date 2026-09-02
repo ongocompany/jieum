@@ -26,6 +26,7 @@ import { spawn } from 'node:child_process';
 import { createWriteStream, existsSync, mkdirSync, readFileSync } from 'node:fs';
 import { createInterface } from 'node:readline';
 import { dirname, join, resolve } from 'node:path';
+import { pathToFileURL } from 'node:url';
 
 
 /** 한글 음절 + 괄호 안 한자. 음절 수가 같은 것만 뒤에서 다시 거른다 */
@@ -60,6 +61,8 @@ export function stripMarkup(text: string): string {
     .replace(/\[\[(?:[^\]|]*\|)?([^\]|]*)\]\]/g, '$1') // [[A|B]] → B
     .replace(/\[https?:[^\s\]]*\s([^\]]*)\]/g, '$1')
     .replace(/<[^>]+>/g, '')
+    // 앞선 제거로 조각이 이어져 새 HTML 시작 문자열이 생겨도 마크업으로 해석되지 않게 한다.
+    .replace(/[<>]/g, ' ')
     .replace(/'''?/g, '')
     .replace(/^[*#:;=|!].*$/gm, '') // 목록·표·머리말 줄은 문장이 아니다
     .replace(/&[a-z]+;/g, ' ')
@@ -307,7 +310,10 @@ async function main() {
   );
 }
 
-main().catch((e) => {
-  console.error(e instanceof Error ? e.message : e);
-  process.exit(1);
-});
+const invokedPath = process.argv[1];
+if (invokedPath && import.meta.url === pathToFileURL(resolve(invokedPath)).href) {
+  main().catch((e) => {
+    console.error(e instanceof Error ? e.message : e);
+    process.exit(1);
+  });
+}
