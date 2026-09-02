@@ -11,6 +11,6 @@
     "@jieum/sdk": "workspace:*"
   },
   "devDependencies": {
-    "vite": "^6.4.0"
+    "vite": "^6.4.3"
   }
 }
