@@ -2,7 +2,7 @@
 
 지음은 입력기로 동작하기 때문에 사용자가 입력하는 내용을 처리합니다. 보안 취약점이나
 개인정보 노출 가능성을 발견했다면 공개 이슈를 만들지 말고
-[support@ongo.kr](mailto:support@ongo.kr)로 알려 주세요.
+[jieum@ongo.kr](mailto:jieum@ongo.kr)로 알려 주세요.
 
 가능하면 다음 내용을 포함해 주세요.
 

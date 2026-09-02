@@ -84,7 +84,7 @@ pnpm --filter @jieum/engine-server test
 [CONTRIBUTING.md](CONTRIBUTING.md)를 참고해 주세요.
 
 - 이슈: [GitHub Issues](../../issues)
-- 이메일: [support@ongo.kr](mailto:support@ongo.kr)
+- 이메일: [jieum@ongo.kr](mailto:jieum@ongo.kr)
 - 관리: [온고컴퍼니](https://ongo.kr)
 
 ## 라이선스
