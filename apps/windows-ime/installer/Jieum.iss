@@ -1,11 +1,18 @@
 #define MyAppName "지음"
-#define MyAppVersion "0.1.0"
 #define MyAppPublisher "온고컴퍼니"
 #define MyAppURL "https://jieum.ongo.kr"
 
+#ifndef MyAppVersion
+  #error MyAppVersion is required
+#endif
+#ifndef MyBuildNumber
+  #error MyBuildNumber is required
+#endif
 #ifndef SourceRoot
   #error SourceRoot is required
 #endif
+
+#define MyAppFileVersion MyAppVersion + "." + MyBuildNumber
 
 [Setup]
 AppId={{D0B8900B-84E4-4D51-A4B3-6248DBA4B7D6}
@@ -23,7 +30,7 @@ ArchitecturesAllowed=x64compatible
 ArchitecturesInstallIn64BitMode=x64compatible
 MinVersion=10.0.17763
 OutputDir={#SourceRoot}\output
-OutputBaseFilename=Jieum-0.1.0-Windows-x64-setup
+OutputBaseFilename=Jieum-{#MyAppVersion}-Windows-x64-setup
 SetupIconFile={#SourceRoot}\icon.ico
 UninstallDisplayIcon={app}\x64\jieum-tip-host.exe
 Compression=lzma2/max
@@ -33,7 +40,7 @@ SetupLogging=yes
 CloseApplications=yes
 RestartApplications=no
 RestartIfNeededByRun=no
-VersionInfoVersion=0.1.0.0
+VersionInfoVersion={#MyAppFileVersion}
 VersionInfoCompany={#MyAppPublisher}
 VersionInfoDescription=지음 한자 입력기 설치 프로그램
 VersionInfoProductName={#MyAppName}

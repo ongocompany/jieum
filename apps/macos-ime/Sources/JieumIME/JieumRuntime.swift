@@ -93,4 +93,12 @@ extension Bundle {
     var shortVersion: String {
         (infoDictionary?["CFBundleShortVersionString"] as? String) ?? "dev"
     }
+
+    var buildVersion: String {
+        (infoDictionary?["CFBundleVersion"] as? String) ?? "dev"
+    }
+
+    var displayVersion: String {
+        "\(shortVersion) (\(buildVersion))"
+    }
 }

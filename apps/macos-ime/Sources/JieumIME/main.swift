@@ -90,6 +90,12 @@ if arguments.contains("--test-mode-chord") {
     exit(failures == 0 ? 0 : 1)
 }
 
+if arguments.contains("--test-mode-indicator") {
+    let ok = ModeIndicator.testLifetimeHiding()
+    print(ok ? "MODE_INDICATOR_LIFETIME_OK" : "MODE_INDICATOR_LIFETIME_FAIL")
+    exit(ok ? 0 : 1)
+}
+
 if arguments.contains("--test-candidates") {
     func group(_ word: String, _ type: String?, _ hanja: [String], contextKey: String? = nil)
         -> WireLookupGroup

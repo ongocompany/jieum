@@ -34,6 +34,9 @@ jobs:
       - name: Build public SDK packages
         run: pnpm build
 
+      - name: Check release version projection
+        run: pnpm test:release-version && pnpm check:release-version
+
       - name: Test public packages
         run: |
           pnpm --filter @jieum/core test

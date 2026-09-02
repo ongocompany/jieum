@@ -16,9 +16,9 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>0.1.0</string>
+	<string>@@JIEUM_VERSION@@</string>
 	<key>CFBundleVersion</key>
-	<string>1</string>
+	<string>@@JIEUM_BUILD@@</string>
 	<key>LSMinimumSystemVersion</key>
 	<string>14.0</string>
 	<!-- 입력기는 Dock에 뜨지 않고 배경에서만 돈다 -->

@@ -13,15 +13,30 @@ REPO_ROOT="$(cd "$APP_DIR/../.." && pwd)"
 BUNDLE="$APP_DIR/build/Jieum.app"
 WORK="$APP_DIR/build/installer"
 OUT_DIR="${JIEUM_RELEASE_DIR:-$REPO_ROOT/dist}"
-VERSION="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$APP_DIR/Resources/Info.plist")"
+VERSION="$(node "$REPO_ROOT/scripts/release-version.mjs" version)"
+BUILD_NUMBER="$(node "$REPO_ROOT/scripts/release-version.mjs" build)"
+PACKAGE_VERSION="$VERSION.$BUILD_NUMBER"
 ARCH="${JIEUM_MAC_ARCH:-$(uname -m)}"
 APPLICATION_IDENTITY="${JIEUM_CODESIGN_IDENTITY:-Developer ID Application: jinwoo lee (9AGG9898BB)}"
 INSTALLER_IDENTITY="${JIEUM_INSTALLER_IDENTITY:-Developer ID Installer: jinwoo lee (9AGG9898BB)}"
 NOTARY_PROFILE="${JIEUM_NOTARY_PROFILE:-}"
+NOTARY_KEY="${JIEUM_NOTARY_KEY:-}"
+NOTARY_KEY_ID="${JIEUM_NOTARY_KEY_ID:-}"
+NOTARY_ISSUER="${JIEUM_NOTARY_ISSUER:-}"
+NOTARY_ARGS=()
 if [[ -n "$NOTARY_PROFILE" ]]; then
+  NOTARY_ARGS=(--keychain-profile "$NOTARY_PROFILE")
   RELEASE_SUFFIX=notarized
-else
+elif [[ -n "$NOTARY_KEY" && -n "$NOTARY_KEY_ID" && -n "$NOTARY_ISSUER" ]]; then
+  NOTARY_ARGS=(--key "$NOTARY_KEY" --key-id "$NOTARY_KEY_ID" --issuer "$NOTARY_ISSUER")
+  RELEASE_SUFFIX=notarized
+elif [[ "${JIEUM_ALLOW_UNNOTARIZED:-0}" == 1 ]]; then
   RELEASE_SUFFIX=signed
+else
+  echo "Apple 공증 자격 증명이 없다 — 공개 설치본은 공증 없이 만들 수 없다." >&2
+  echo "JIEUM_NOTARY_PROFILE 또는 JIEUM_NOTARY_KEY·KEY_ID·ISSUER를 설정한다." >&2
+  echo "개발용 서명본만 필요하면 JIEUM_ALLOW_UNNOTARIZED=1을 명시한다." >&2
+  exit 1
 fi
 
 case "$ARCH" in
@@ -85,7 +100,8 @@ xattr -cr "$WORK/root/Library/Input Methods/Jieum.app"
 cp -R "$APP_DIR/installer/resources/ko.lproj/." "$WORK/resources/ko.lproj/"
 cp "$REPO_ROOT/LICENSE" "$WORK/resources/ko.lproj/license.txt"
 for file in "$WORK/resources/ko.lproj"/*.html; do
-  sed "s|@@MAC_REQUIREMENT@@|$MAC_REQUIREMENT|g" "$file" > "$file.tmp"
+  sed -e "s|@@MAC_REQUIREMENT@@|$MAC_REQUIREMENT|g" -e "s|@@VERSION@@|$VERSION|g" \
+    "$file" > "$file.tmp"
   mv "$file.tmp" "$file"
 done
 
@@ -93,12 +109,12 @@ COPYFILE_DISABLE=1 pkgbuild \
   --root "$WORK/root" \
   --install-location / \
   --identifier com.ongocompany.inputmethod.Jieum.installer \
-  --version "$VERSION" \
+  --version "$PACKAGE_VERSION" \
   --ownership recommended \
   --scripts "$APP_DIR/installer/scripts" \
   "$WORK/Jieum-component.pkg"
 
-sed -e "s/@@VERSION@@/$VERSION/g" -e "s/@@ARCH@@/$ARCH/g" \
+sed -e "s/@@VERSION@@/$PACKAGE_VERSION/g" -e "s/@@ARCH@@/$ARCH/g" \
   "$APP_DIR/installer/Distribution.xml" > "$WORK/Distribution.xml"
 
 productbuild \
@@ -112,7 +128,7 @@ pkgutil --expand-full "$WORK/Jieum-$VERSION-macOS-$ARCH.pkg" "$WORK/expanded"
 pkgutil --payload-files "$WORK/Jieum-component.pkg" | grep -q '^\./Library/Input Methods/Jieum.app/'
 
 cp "$WORK/Jieum-$VERSION-macOS-$ARCH.pkg" "$WORK/dmg/지음 $VERSION 설치.pkg"
-sed -e "s|@@MAC_REQUIREMENT@@|$MAC_REQUIREMENT|g" \
+sed -e "s|@@MAC_REQUIREMENT@@|$MAC_REQUIREMENT|g" -e "s|@@VERSION@@|$VERSION|g" \
   "$APP_DIR/installer/dmg-readme.txt" > "$WORK/dmg/먼저 읽어 주세요.txt"
 
 DMG="$OUT_DIR/Jieum-$VERSION-macOS-$ARCH-$RELEASE_SUFFIX.dmg"
@@ -129,9 +145,9 @@ codesign --verify --deep --strict --verbose=2 "$BUNDLE"
 pkgutil --check-signature "$WORK/Jieum-$VERSION-macOS-$ARCH.pkg" | \
   grep -Fq "Developer ID Installer: jinwoo lee (9AGG9898BB)"
 
-if [[ -n "$NOTARY_PROFILE" ]]; then
-  echo "[지음] Apple 공증 제출: $NOTARY_PROFILE"
-  xcrun notarytool submit "$DMG" --keychain-profile "$NOTARY_PROFILE" --wait
+if [[ ${#NOTARY_ARGS[@]} -gt 0 ]]; then
+  echo "[지음] Apple 공증 제출"
+  xcrun notarytool submit "$DMG" "${NOTARY_ARGS[@]}" --wait
   xcrun stapler staple "$DMG"
   xcrun stapler validate "$DMG"
   hdiutil verify "$DMG"
@@ -143,6 +159,6 @@ echo
 echo "완료: $DMG"
 stat -f '크기: %z bytes' "$DMG"
 shasum -a 256 "$DMG"
-if [[ -z "$NOTARY_PROFILE" ]]; then
+if [[ ${#NOTARY_ARGS[@]} -eq 0 ]]; then
   echo "주의: 설치 파일은 서명됐지만 아직 공증되지 않았다."
 fi

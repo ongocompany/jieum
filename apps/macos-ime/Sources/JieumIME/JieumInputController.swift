@@ -164,6 +164,7 @@ final class JieumInputController: IMKInputController {
         // 포커스를 잃을 때 조합 중인 글자를 잃어버리면 안 된다
         flushComposition(client: sender)
         hideCandidates()
+        modeIndicator.hide()
         if let sessionId {
             JieumRuntime.shared.client.sessionClose(sessionId)
             self.sessionId = nil
@@ -819,7 +820,7 @@ final class JieumInputController: IMKInputController {
 
         let runtime = JieumRuntime.shared
         let about = NSMenuItem(
-            title: "지음 \(Bundle.main.shortVersion)"
+            title: "지음 \(Bundle.main.displayVersion)"
                 + (runtime.serverVersion.map { " · 엔진 \($0)" } ?? " · 엔진 연결 안 됨")
                 + (runtime.dictFingerprint.map { " · 사전 \($0)" } ?? ""),
             action: nil, keyEquivalent: "")

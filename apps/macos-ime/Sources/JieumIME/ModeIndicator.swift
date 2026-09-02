@@ -74,8 +74,41 @@ final class ModeIndicator {
         // 연달아 누르면 마지막 것만 남는다 — 앞의 예약을 취소하지 않으면 두 번째
         // 표시가 첫 번째의 시계에 맞춰 일찍 사라진다.
         hideWork?.cancel()
-        let work = DispatchWorkItem { [weak self] in self?.panel.orderOut(nil) }
+        // IMK는 텍스트 칸마다 컨트롤러를 만들었다가 버릴 수 있다. 여기서 self를 약하게
+        // 잡으면 표시 직후 컨트롤러가 사라졌을 때 숨김이 빈 동작이 되고, AppKit이 보관한
+        // 패널만 화면에 영구히 남는다. 예약 작업이 패널을 실행 때까지 직접 붙든다.
+        let panel = panel
+        let work = DispatchWorkItem { panel.orderOut(nil) }
         hideWork = work
         DispatchQueue.main.asyncAfter(deadline: .now() + Self.duration, execute: work)
+    }
+
+    /// 입력 지점이 비활성화되면 예약까지 기다리지 않고 치운다.
+    func hide() {
+        hideWork?.cancel()
+        hideWork = nil
+        panel.orderOut(nil)
+    }
+
+    /**
+     컨트롤러가 표시 직후 사라지는 IMK 수명 경계를 UI 호스트 없이 재현한다.
+
+     테스트가 패널만 따로 붙들고 표시 객체를 놓는다. 예약 작업도 표시 객체에 기대면
+     0.8초 뒤에도 `isVisible`이 true라 실패한다.
+     */
+    static func testLifetimeHiding() -> Bool {
+        _ = NSApplication.shared
+
+        var indicator: ModeIndicator? = ModeIndicator()
+        guard let panel = indicator?.panel else { return false }
+        indicator?.flash("漢字", caretRect: NSRect(x: 100, y: 100, width: 1, height: 20))
+        guard panel.isVisible else { return false }
+
+        indicator = nil
+        let deadline = Date().addingTimeInterval(Self.duration + 0.3)
+        while panel.isVisible, Date() < deadline {
+            RunLoop.main.run(until: min(deadline, Date().addingTimeInterval(0.05)))
+        }
+        return !panel.isVisible
     }
 }

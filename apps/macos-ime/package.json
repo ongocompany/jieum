@@ -1,6 +1,6 @@
 {
   "name": "@jieum/macos-ime",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "description": "지음 macOS 시스템 입력기 (Swift/IMK 셸)",
   "scripts": {

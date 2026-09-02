@@ -7,12 +7,12 @@ Rust와 Windows Text Services Framework(TSF)로 만든 시스템 입력기입니
 
 Windows 10 또는 11(64비트)이 필요합니다.
 
-[지음 웹사이트](https://jieum.ongo.kr/download/windows)에서 Windows 0.1.0 베타
+[지음 웹사이트](https://jieum.ongo.kr/download/windows)에서 Windows 0.1.1 베타
 설치 파일을 내려받습니다.
 
 1. 내려받은 설치 파일을 실행합니다.
 2. 이 설치 파일은 아직 Authenticode 코드 서명 전이라 Windows가 파란 경고 화면을
-   띄울 수 있습니다. 파일 이름이 `Jieum-0.1.0-Windows-x64-setup.exe`인지 확인한 뒤
+   띄울 수 있습니다. 파일 이름이 `Jieum-0.1.1-Windows-x64-setup.exe`인지 확인한 뒤
    `추가 정보`를 누르고 `실행`을 선택합니다.
 3. 이어지는 사용자 계정 컨트롤에서 게시자가 `알 수 없음`인지 확인하고 `예`를 선택합니다.
 4. 설치가 끝나면 작업 표시줄 오른쪽의 입력 표시기(`한`/`A`)에서 지음을 선택합니다.

@@ -8,6 +8,8 @@
     "build": "pnpm --filter @jieum/core build && pnpm --filter @jieum/browser build && pnpm --filter @jieum/sdk build",
     "build:sdk": "pnpm --filter @jieum/core build && pnpm --filter @jieum/browser build && pnpm --filter @jieum/sdk build",
     "build:dict": "pnpm --filter @jieum/dict-builder build:dict",
+    "check:release-version": "node scripts/release-version.mjs check",
+    "test:release-version": "node --test scripts/release-version.test.mjs",
     "lint": "eslint .",
     "format": "prettier --write .",
     "typecheck": "pnpm -r run typecheck"

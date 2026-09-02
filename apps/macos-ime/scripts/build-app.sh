@@ -17,6 +17,8 @@ case "$ARCH" in
 esac
 LIBHANGUL_PREFIX="${JIEUM_LIBHANGUL_PREFIX:-$APP_DIR/vendor/libhangul-$ARCH}"
 BUNDLE="$APP_DIR/build/Jieum.app"
+VERSION="$(node "$REPO_ROOT/scripts/release-version.mjs" version)"
+BUILD_NUMBER="$(node "$REPO_ROOT/scripts/release-version.mjs" build)"
 
 echo "[지음] Swift 빌드 ($CONFIG · $ARCH)"
 cd "$APP_DIR"
@@ -33,7 +35,9 @@ rm -rf "$BUNDLE"
 mkdir -p "$BUNDLE/Contents/MacOS" "$BUNDLE/Contents/Resources"
 
 cp "$BIN_PATH" "$BUNDLE/Contents/MacOS/JieumIME"
-cp "$APP_DIR/Resources/Info.plist" "$BUNDLE/Contents/Info.plist"
+sed -e "s/@@JIEUM_VERSION@@/$VERSION/g" -e "s/@@JIEUM_BUILD@@/$BUILD_NUMBER/g" \
+  "$APP_DIR/Resources/Info.plist" > "$BUNDLE/Contents/Info.plist"
+plutil -lint "$BUNDLE/Contents/Info.plist" >/dev/null
 printf 'APPL????' > "$BUNDLE/Contents/PkgInfo"
 
 # 입력 소스 목록에 보일 이름. 없으면 입력 모드가 날것 식별자
