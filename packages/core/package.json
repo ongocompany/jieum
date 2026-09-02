@@ -26,6 +26,6 @@
     "vitest": "^3.1.0"
   },
   "dependencies": {
-    "es-hangul": "^2.0.0"
+    "es-hangul": "^2.4.0"
   }
 }
