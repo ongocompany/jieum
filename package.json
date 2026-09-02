@@ -23,7 +23,7 @@
     "onlyBuiltDependencies": ["esbuild"]
   },
   "engines": {
-    "node": ">=20",
+    "node": ">=22.22.2",
     "pnpm": ">=10"
   }
 }
