@@ -46,23 +46,70 @@ export interface GoldenOut {
 }
 
 /**
+ * HTML 주석·ref·태그를 왼쪽부터 소비한다. 제거 뒤 양옆 조각이 붙어 새 태그 시작 문자열을
+ * 만들지 않도록 모든 꺾쇠를 이 단계에서 소비하고 공백 하나로 바꾼다.
+ */
+function stripAngleMarkup(text: string): string {
+  const lower = text.toLowerCase();
+  let output = '';
+  let cursor = 0;
+
+  while (cursor < text.length) {
+    if (text.startsWith('<!--', cursor)) {
+      const end = text.indexOf('-->', cursor + 4);
+      output += ' ';
+      cursor = end < 0 ? text.length : end + 3;
+      continue;
+    }
+
+    if (text[cursor] === '<') {
+      const end = text.indexOf('>', cursor + 1);
+      if (end < 0) {
+        output += ' ';
+        cursor++;
+        continue;
+      }
+
+      const tag = lower.slice(cursor + 1, end).trim();
+      if (/^ref(?:\s|$)/.test(tag) && !tag.endsWith('/')) {
+        const close = lower.indexOf('</ref>', end + 1);
+        if (close >= 0) {
+          output += ' ';
+          cursor = close + '</ref>'.length;
+          continue;
+        }
+      }
+
+      output += ' ';
+      cursor = end + 1;
+      continue;
+    }
+
+    if (text[cursor] === '>') {
+      output += ' ';
+      cursor++;
+      continue;
+    }
+
+    output += text[cursor];
+    cursor++;
+  }
+
+  return output;
+}
+
+/**
  * 위키 마크업을 걷어낸다.
  *
  * 완벽할 필요는 없다. 목적은 **병기 주변 문맥이 사람이 읽는 문장에 가깝게** 만드는 것이지
  * 위키 문법을 정확히 해석하는 것이 아니다. 남은 찌꺼기가 있는 문장은 뒤에서 통째로 버린다.
  */
 export function stripMarkup(text: string): string {
-  return text
-    .replace(/<ref[^>]*\/>/g, '')
-    .replace(/<ref[^>]*>[\s\S]*?<\/ref>/g, '')
-    .replace(/<!--[\s\S]*?-->/g, '')
+  return stripAngleMarkup(text)
     .replace(/\{\{[^{}]*\}\}/g, '') // 단순 템플릿 (중첩은 아래에서 반복 제거)
     .replace(/\{\{[\s\S]*?\}\}/g, '')
     .replace(/\[\[(?:[^\]|]*\|)?([^\]|]*)\]\]/g, '$1') // [[A|B]] → B
     .replace(/\[https?:[^\s\]]*\s([^\]]*)\]/g, '$1')
-    .replace(/<[^>]+>/g, '')
-    // 앞선 제거로 조각이 이어져 새 HTML 시작 문자열이 생겨도 마크업으로 해석되지 않게 한다.
-    .replace(/[<>]/g, ' ')
     .replace(/'''?/g, '')
     .replace(/^[*#:;=|!].*$/gm, '') // 목록·표·머리말 줄은 문장이 아니다
     .replace(/&[a-z]+;/g, ' ')
