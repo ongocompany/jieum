@@ -22,6 +22,15 @@ macOS 설치 파일은 Developer ID로 서명하고 Apple 공증을 거쳤습니
 Windows 설치 파일은 아직 코드 서명 전이어서 설치할 때 `알 수 없는 게시자` 경고가
 나타날 수 있습니다.
 
+[GitHub Release](https://github.com/ongocompany/jieum/releases/tag/v0.1.0)에서도 같은 설치
+파일과 SHA-256 값을 확인할 수 있습니다.
+
+```text
+3f05e4113447120b625b995b0040049c9821279d0cbc8f5100ee235f852f40bf  Jieum-0.1.0-macOS-arm64-notarized.dmg
+c51db1950ef0a229a69a0bb2cbc6746079f07f95aeae4997eff3bedc76acf860  Jieum-0.1.0-macOS-x86_64-notarized.dmg
+151b546a4c0819eecdab2c3a51aeea36c03c5bf46d2b39f46a35888888f7e051  Jieum-0.1.0-Windows-x64-setup.exe
+```
+
 ## 주요 기능
 
 - 가장 긴 표제어부터 단어 단위 후보를 제안합니다.
@@ -75,7 +84,7 @@ pnpm --filter @jieum/engine-server test
 [CONTRIBUTING.md](CONTRIBUTING.md)를 참고해 주세요.
 
 - 이슈: [GitHub Issues](../../issues)
-- 이메일: [jieum@ongo.kr](mailto:jieum@ongo.kr)
+- 이메일: [support@ongo.kr](mailto:support@ongo.kr)
 - 관리: [온고컴퍼니](https://ongo.kr)
 
 ## 라이선스
