@@ -15,7 +15,7 @@ rust-version = "1.85"
 
 [workspace.dependencies]
 windows = "0.62"
-windows-core = "0.62"
+windows-core = "0.100"
 serde = "1"
 serde_json = "1"
 jieum-engine-client = { path = "crates/jieum-engine-client" }
