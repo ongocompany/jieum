@@ -987,6 +987,14 @@ impl TextService_Impl {
     fn handle_key_down(&self, context: &ITfContext, vk: u16) -> Result<bool> {
         let composing = self.is_composing();
 
+        // 수식키 자체는 아직 글자나 단축키가 아니다. 특히 Shift를 여기서 일반 키처럼
+        // 처리하면 `ㅇ` 다음 Shift+O를 누르는 순간 `ㅇ`이 먼저 확정돼 `ㅇㅒ`가 된다.
+        // 조합은 유지하고 키는 앱으로 넘긴다. 뒤이어 오는 실제 키에서 Shift/Ctrl/Alt
+        // 상태를 읽어 한글 키인지 단축키인지 판단한다.
+        if crate::key_mapping::is_modifier_key(vk) {
+            return Ok(false);
+        }
+
         // ---- 잘못 배운 조합 잊기 (Ctrl+Delete) ----
         //
         // 윈도우 TIP에는 메뉴가 없다(macOS는 입력 소스 메뉴에 항목을 둔다). 자동 학습만으로는
@@ -1042,13 +1050,6 @@ impl TextService_Impl {
         // 단축키는 우리 것이 아니다. 다만 조합 중이었다면 먼저 확정한다 — 조합을
         // 띄워 둔 채로 앱이 전체 선택이나 붙여넣기를 하면 문서 상태가 어긋난다.
         if modifier_down() {
-            // ⚠️ **수식키 자체가 눌린 것으로는 확정하지 않는다.** 아직 무슨 단축키인지
-            // 모르는 시점이고, 확정하면 후보 목록이 사라진다. 그러면 뒤이어 오는
-            // `Ctrl+Delete`(조합 잊기)에는 지울 후보가 없다 — 2026-08-28에 그 기능이
-            // 조용히 안 먹은 원인이 이것이었다. 확정은 **조합 키가 실제로 올 때** 한다.
-            if vk == VK_CONTROL.0 || vk == VK_MENU.0 || vk == VK_SHIFT.0 {
-                return Ok(false);
-            }
             if composing {
                 self.commit_all(context)?;
             }
@@ -1096,9 +1097,7 @@ impl TextService_Impl {
             return Ok(true);
         }
 
-        if (0x41..=0x5A).contains(&vk) {
-            let ascii = b'a' + (vk - 0x41) as u8;
-
+        if let Some(ascii) = crate::key_mapping::hangul_ascii(vk, shift_down()) {
             let eaten = {
                 let composer_ref = self.composer.borrow();
                 let Some(composer) = composer_ref.as_ref() else {

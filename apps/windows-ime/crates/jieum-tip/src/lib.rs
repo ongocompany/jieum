@@ -18,6 +18,7 @@ mod edit_session;
 mod engine;
 mod guids;
 mod hangul;
+mod key_mapping;
 pub mod logging;
 mod register;
 mod settings;
