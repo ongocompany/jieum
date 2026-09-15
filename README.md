@@ -13,22 +13,22 @@
 
 ## 다운로드
 
-- [macOS 0.1.1 베타 — Apple Silicon](https://jieum.ongo.kr/download/macos/arm64) — M1 이상, macOS 14 이상
-- [macOS 0.1.1 베타 — Intel](https://jieum.ongo.kr/download/macos/intel) — Intel Mac, macOS 14 이상
-- [Windows 0.1.1 베타 — x64](https://jieum.ongo.kr/download/windows) — Windows 10·11
+- [macOS 0.1.2 베타 — Apple Silicon](https://jieum.ongo.kr/download/macos/arm64) — M1 이상, macOS 14 이상
+- [macOS 0.1.2 베타 — Intel](https://jieum.ongo.kr/download/macos/intel) — Intel Mac, macOS 14 이상
+- [Windows 0.1.2 베타 — x64](https://jieum.ongo.kr/download/windows) — Windows 10·11
 
 설치 방법과 기본 조작은 [지음 웹사이트](https://jieum.ongo.kr)에서 확인할 수 있습니다.
 macOS 설치 파일은 Developer ID로 서명하고 Apple 공증을 거쳤습니다.
 Windows 설치 파일은 아직 코드 서명 전이어서 설치할 때 `알 수 없는 게시자` 경고가
 나타날 수 있습니다.
 
-[GitHub Release](https://github.com/ongocompany/jieum/releases/tag/v0.1.1)에서도 같은 설치
+[GitHub Release](https://github.com/ongocompany/jieum/releases/tag/v0.1.2)에서도 같은 설치
 파일과 SHA-256 값을 확인할 수 있습니다.
 
 ```text
-71bf5c4f02e63734eac1a215dd67ff6e8dbdecefec4d9cc0a5e1b3de9605475d  Jieum-0.1.1-macOS-arm64-notarized.dmg
-d2ff62cb0d62634fbfb68200dffca803109d02bc2066a9565d114e486e680326  Jieum-0.1.1-macOS-x86_64-notarized.dmg
-9fa9cf1edd7bdff2de8d9154f5dc898c81abbaaaa920239d30a8bb95bf58372f  Jieum-0.1.1-Windows-x64-setup.exe
+96f87f927bd9904c1d9a6f749814948b220365196e3006bed0a9caef4b2e5e1f  Jieum-0.1.2-macOS-arm64-notarized.dmg
+8248bface737ac31471ab31a50ab957f2fd8bbec26e4067c41e50f3c12338d00  Jieum-0.1.2-macOS-x86_64-notarized.dmg
+a8754a84ddcd93fed725640d9ac7d858e6a82e8ecbf36df7137df5900466d2d9  Jieum-0.1.2-Windows-x64-setup.exe
 ```
 
 ## 주요 기능

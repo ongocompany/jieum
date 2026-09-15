@@ -3,6 +3,10 @@ packages:
   - 'tools/*'
   - 'apps/*'
 
+allowBuilds:
+  esbuild: true
+  spawn-sync: false
+
 onlyBuiltDependencies:
   - esbuild
 
