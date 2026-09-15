@@ -32,5 +32,5 @@ for (const invalid of [
 }
 
 test('저장소의 플랫폼과 공개 문서가 정본 버전을 가리킨다', () => {
-  assert.deepEqual(checkReleaseProjection(), { version: '0.1.1', build: 2 });
+  assert.deepEqual(checkReleaseProjection(), { version: '0.1.2', build: 3 });
 });
